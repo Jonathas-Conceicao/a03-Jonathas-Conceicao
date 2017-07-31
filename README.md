@@ -6,14 +6,15 @@ Declaramos que o presente trabalho contém código desenvolvido exclusivamente p
 
 (Preencha com seus dados)
 
-- Nome completo: 
-- Username do Github: 
-- Email @inf: 
+- Nome completo: Lucas Eduardo Bretana
+- Username do Github: lucasbretana
+- Email @inf: lebretana@inf.ufpel.edu.br
 
 (Em caso de dupla)
-- Nome completo: 
-- Username do Github: 
-- Email @inf: 
+
+- Nome completo: Jonathas Augusto de Oliveira Conceição
+- Username do Github: Jonathas-Conceicao
+- Email @inf: jadoliveira@inf.ufpel.edu.br
 
 ## Descrição
 
