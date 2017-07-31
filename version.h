@@ -14,6 +14,9 @@
 #define ESCRITA 1
 #define LEITURAESCRITA 2
 
+#define MAXVERSIONS 8 // máximo de versões que um arquivo pode ter 
+#define MAXBLOCKSVERSION 256 // máximo de blocos que uma versão pode mudar
+
 
 #define BLOCO 4096
 
@@ -32,7 +35,7 @@ typedef int indice_fs_t;
  *  @param blocos número de blocos do arquivo
  *  @return SUCCESSO ou FALHA
  */
-int initfs(char ** arquivo, int blocos);
+int initfs(char * arquivo, int blocos);
 
 
 /** Abre um sistema de arquivos.
@@ -41,29 +44,28 @@ int initfs(char ** arquivo, int blocos);
  *  @return file handle do descritor de sistema de arquivos ou FALHA
  */
 
-indice_fs_t vopenfs(char ** arquivo);
+indice_fs_t vopenfs(char * arquivo);
 
 
-/** Abre um arquivo criptografado.
+/** Abre um arquivo versionado.
  *
  *
  * @param fs o file handle do sistema de arquivos
  * @param nome o arquivo a ser aberto
  * @param acesso LEITURA, ESCRITA ou LEITURAESCRITA
- * @param chave deslocamento a ser usado nos acessos
  * @param versao versão a ser aberta
  * @return índice do arquivo aberto, FALHA se não abrir
  */
-indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, char deslocamento, int version);
+indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version);
 
-/** Fecha um arquivo criptografado.
+/** Fecha um arquivo versionado.
  *
  * @param arquivo índice para a tabela de arquivos abertos
  * @return SUCESSO OU FALHA
  */
 int vclose(indice_arquivo_t arquivo);
 
-/** Lê bytes de um arquivo criptografado aberto.
+/** Lê bytes de um arquivo versionado aberto.
  *
  * @param arquivo índice para a tabela de arquivos abertos
  * @param tamanho número de bytes a serem lidos
@@ -72,7 +74,7 @@ int vclose(indice_arquivo_t arquivo);
  */
 uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer);
 
-/** Escreve bytes em um arquivo criptografado aberto.
+/** Escreve bytes em um arquivo versionado aberto.
  *
  * A escrita é sempre realizada no modo append, ou seja, no fim do arquivo.
  *
