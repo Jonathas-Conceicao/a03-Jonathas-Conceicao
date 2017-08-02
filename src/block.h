@@ -2,11 +2,10 @@
 #define _BLOCK_H
 
 #include "version.h"
+#include "useful.h"
 #include <stdlib.h>
 
-#define LIMIT (BLOCO / sizeof(int)) - 2
-
-typedef indice_arquivo_t index_block_t;
+#define LIMIT (BLOCK_SIZE / sizeof(int)) - 2
 
 typedef struct block_ {
   int indexVersion[MAXVERSIONS];

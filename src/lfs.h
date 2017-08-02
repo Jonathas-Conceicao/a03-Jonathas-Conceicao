@@ -2,6 +2,7 @@
 #define _LFS_H
 
 #include "version.h"
+#include "useful.h"
 
 typedef struct fs_ {
   char name[255];
@@ -9,5 +10,7 @@ typedef struct fs_ {
   FILE *disk;
   void *blockList;
 }fs_t;
+
+typedef fs_t* fsList_t;
 
 #endif
