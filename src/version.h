@@ -43,7 +43,6 @@ int initfs(char * arquivo, int blocos);
  *  @param  arquivo   nome do arquivo no sistema de arquivos hospedeiro
  *  @return           file handle do descritor de sistema de arquivos ou FALHA
  */
-
 indice_fs_t vopenfs(char * arquivo);
 
 
