@@ -3,7 +3,7 @@ SHELL=/bin/bash
 TARGET = a03-conferidor-de-magias
 
 CC = gcc
-CFLAG = -std=c11 -Wall -Wextra #-Werror # -g
+CFLAG = -std=c99 -Wall -Wextra #-Werror # -g
 
 # Folders
 OBJ = obj
@@ -52,6 +52,14 @@ useful.o: $(SRC)/version.h $(SRC)/useful.c
 version.o: $(SRC)/simplegrade.h $(SRC)/version.c
 	@echo -e "$(NOTE)Compiling version.c$(NC)";
 	$(CC) $(CFLAG) -c $(SRC)/version.c 							-o $(OBJ)/version.o -lm
+
+testTAA:
+	@echo -e "$(NOTE)Compiling taa.c$(NC)";
+	$(CC) $(CFLAG) -c $(SRC)/taa.c 									-o $(OBJ)/taa.o
+	@echo -e "$(NOTE)Compiling useful.c$(NC)";
+	$(CC) $(CFLAG) -c $(SRC)/useful.c 								-o $(OBJ)/useful.o
+	@echo -e "$(NOTE)Compiling testTAA$(NC)";
+	$(CC) $(CFLAG) $(OBJ)/taa.o $(OBJ)/useful.o testTAA.c 	-o $(BIN)/a.out -lm
 
 clean:
 	@rm $(OBJ)/*.o || true
