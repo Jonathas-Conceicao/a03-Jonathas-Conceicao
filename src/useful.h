@@ -6,7 +6,7 @@
 typedef indice_fs_t index_fs_t;
 typedef indice_arquivo_t index_block_t;
 
-#define SUCESS SUCESSO
+#define SUCCESS SUCESSO
 #define FAIL FALHA
 
 #define READ LEITURA
@@ -26,5 +26,13 @@ typedef char charzao_t;
  *                        respectively, to be less than, to match, or be greater than s2.
  */
 int compareCharzao(charzao_t *s1, charzao_t *s2);
+
+/**
+ * Copies the string pointed to by src to the buffer pointed to by dest.
+ *
+ * @param  dest        Destiny string.
+ * @param  src         Source string.
+ */
+void copyCharzao(char *dest, char *src);
 
 #endif //_USEFUL_H
