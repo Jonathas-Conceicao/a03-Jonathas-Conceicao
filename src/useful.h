@@ -27,4 +27,12 @@ typedef char charzao_t;
  */
 int compareCharzao(charzao_t *s1, charzao_t *s2);
 
+/**
+ * Copies the string pointed to by src to the buffer pointed to by dest.
+ *
+ * @param  dest        Destiny string.
+ * @param  src         Source string.
+ */
+void copyCharzao(char *dest, char *src);
+
 #endif //_USEFUL_H
