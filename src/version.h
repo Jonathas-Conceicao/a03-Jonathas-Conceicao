@@ -5,7 +5,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include "simplegrade.h"
 
 #define SUCESSO 1
 #define FALHA 0

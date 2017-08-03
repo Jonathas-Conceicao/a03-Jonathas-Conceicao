@@ -3,4 +3,6 @@
 *.exe
 *.temp
 *.pdf
+*.o
+*.swp
 tags
