@@ -80,4 +80,13 @@ index_file_t getFileIndex(taa_t table, charzao_t *name, index_fs_t fsIndex);
  * @return             file's mode, -1 if position is invalid.
  */
 int getFileMode(taa_t table, index_file_t id);
+
+/**
+ * Finds file's descriptor's index.
+ *
+ * @param  table                  System's TAA.
+ * @param  id                     File's index in table.
+ * @return                        File's descriptor's index, or -1 if falied.
+ */
+int getFileDescriptorIndex(taa_t table, index_file_t id);
 #endif

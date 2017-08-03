@@ -5,6 +5,7 @@
 #include <stdlib.h>
 
 static index_file_t getNextEmptyPostionTAA(taa_t table);
+static int idIsValid(taa_t table, index_file_t id);
 
 taa_t *initTAA(int size) {
   taa_t *ret;
@@ -49,16 +50,25 @@ index_file_t getFileIndex(taa_t table, charzao_t *name, index_fs_t fsIndex) {
 
 int closeFileTAA(taa_t table, index_file_t id) {
   id -= 1;
-  if (id >= table.size || id < 0 || table.file[id].vBit == 0) {
-    return FAIL; // If index is out of range or if cell was already empty we have a fail.
-  }
+  if(!idIsValid(table, id)) return FAIL;
   table.file[id].vBit = 0; // I can empty that cell
   return SUCCESS;
 }
 
 int getFileMode(taa_t table, index_file_t id) {
   id -= 1;
+  if(!idIsValid(table, id)) return -1;
   return table.file[id].mode;
+}
+
+int getFileDescriptorIndex(taa_t table, index_file_t id) {
+  id -= 1;
+  if(!idIsValid(table, id)) return -1;
+  return table.file[id].descriptorIndex;
+}
+
+static int idIsValid(taa_t table, index_file_t id) { // If index is out of range or if cell was already empty we have a fail.
+  return (id >= table.size || id < 0 || table.file[id].vBit == 0) ? FAIL : SUCCESS;
 }
 
 static index_file_t getNextEmptyPostionTAA(taa_t table) {
