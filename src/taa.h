@@ -8,8 +8,6 @@
 #include <time.h>
 #include <stdint.h>
 
-typedef char charzao_t;
-
 typedef struct file_ {
   charzao_t name[255];
   index_fs_t fsIndex;
@@ -18,7 +16,7 @@ typedef struct file_ {
 }file_t;
 
 typedef struct file_descriptor_ {
-  charzao name[255];
+  charzao_t name[255];
   time_t creation;
   time_t modification;
   time_t access;
@@ -27,7 +25,11 @@ typedef struct file_descriptor_ {
   int numVersion;
 } file_descriptor_t;
 
-typedef file_t* taa_t;
+// typedef file_t* taa_t;
+typedef struct taa_ {
+  file_t *file;
+  int     size;
+}taa_t;
 
 /**
  * Initialize the Table of Open Files.
@@ -35,16 +37,17 @@ typedef file_t* taa_t;
  * @param  size    Max number of files in TAA.
  * @return         Reference to the TAA.
  */
-taa_t initTAA(int size);
+taa_t *initTAA(int size);
 
 /**
  * Adds a file to the TAA returning the index of its descriptor.
  *
+ * @param  table             System's table to add the file.
  * @param  name              File's name.
  * @param  fsIndex           Index of files's FS.
  * @param  mode              READ, WRITE or READ_AND_WRITE
  * @param  descriptorIndex   Index of file's descriptor in the directory.
- * @return               Indice para o descritor do arquivo ou FALHA.
+ * @return                   SUCESS or FAIL.
  */
-int openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, int descriptorIndex);
+int openFileTAA(taa_t talbe, charzao_t *name, index_fs_t fsIndex, int mode, int descriptorIndex);
 #endif
