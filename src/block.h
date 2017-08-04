@@ -1,9 +1,10 @@
 #ifndef _BLOCK_H
 #define _BLOCK_H
 
+#include <stdlib.h>
+
 #include "version.h"
 #include "useful.h"
-#include <stdlib.h>
 
 #define LIMIT (BLOCK_SIZE / sizeof(int)) - 2
 

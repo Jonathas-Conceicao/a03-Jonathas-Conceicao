@@ -1,8 +1,6 @@
 #include <stdlib.h>
 #include <assert.h>
 
-#include "version.h"
-#include "useful.h"
 #include "taa.h"
 
 static index_file_t getNextEmptyPostionTAA(void);

@@ -1,7 +1,4 @@
-#include <time.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
+#include <assert.h>
 
 #include "version.h"
 #include "useful.h"
@@ -14,6 +11,7 @@ int initfs(char * arquivo, int blocos) {
   if (blocos < getNumBlocksMetaData()) return FAIL;
   FILE *pFile;
   pFile = fopen(arquivo, "wb+");
+  assert(pFile);
   return createFileSystem(arquivo, blocos, pFile);
 }
 
@@ -22,8 +20,13 @@ indice_fs_t vopenfs(char * arquivo) {
   return openFileSystem(arquivo);
 }
 
+void vclosefs(indice_fs_t handler){
+  handler = handler;
+}
+
 
 indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
+  version = version;
   charzao_t *name = charToCharzao(nome);
   if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 0) {
     if (acesso == READ) {
@@ -33,4 +36,52 @@ indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
   }
   int id = getFileDescriptorIndexFS(fs, name);
   return openFileTAA(name, fs, acesso, id);
+}
+
+int vclose(indice_arquivo_t arquivo){
+  arquivo = arquivo;
+  return 0;
+}
+
+uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
+  arquivo = arquivo;
+  tamanho = tamanho;
+  buffer = buffer;
+  return (uint32_t)0;
+}
+
+int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
+  arquivo = arquivo;
+  tamanho = tamanho;
+  buffer = buffer;
+  return 0;
+}
+
+int vdelete(indice_arquivo_t arquivo){
+  arquivo = arquivo;
+  return 0;
+}
+
+int vseek(indice_arquivo_t arquivo, uint32_t seek){
+  arquivo = arquivo;
+  seek = seek;
+  return 0;
+}
+
+time_t vcreation(indice_arquivo_t arquivo, int versao){
+  arquivo = arquivo;
+  versao = versao;
+  return (time_t)0;
+}
+
+time_t vaccessed(indice_arquivo_t arquivo, int versao){
+  arquivo = arquivo;
+  versao = versao;
+  return (time_t)0;
+}
+
+time_t vlast_modified(indice_arquivo_t arquivo, int versao){
+  arquivo = arquivo;
+  versao = versao;
+  return (time_t)0;
 }

@@ -1,6 +1,6 @@
-#include "useful.h"
-
 #include <string.h>
+
+#include "useful.h"
 
 int compareCharzao(charzao_t *s1, charzao_t *s2) {
   return strcmp(s1,s2);
