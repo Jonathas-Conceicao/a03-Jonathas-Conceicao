@@ -52,16 +52,6 @@ void destryLFS();
 int getNumBlocksMetaData();
 
 /**
- * Creates a new file system in the file system list.
- *
- * @param  name             File System's name.
- * @param  size             Size in blocs of the FS.
- * @param  pFile            File System's file.
- * @return                  SUCCESS or FAIL.
- */
-int createFileSystem(char *name, int size, FILE *pFile);
-
-/**
  * Creates a new file in the FS.
  *
  * @param  fs           Index of file's FS.
@@ -80,10 +70,21 @@ int createFileDescriptorFS(index_fs_t fs, charzao_t *name);
 int getFileDescriptorIndexFS(index_fs_t fs, charzao_t *name);
 
 /**
- * Opens the file system based on it's name and returns it's file handler.
+ * Creates the file system based on it's name and returns it's file handler.
  *
  * @param  name           File Systems's name.
+ * @param  size           size is the number of blocks for this file system.
+ * @param  pFile          pFile it the disk of this file system.
  * @return                FS's handler or FAIL.
  */
-index_fs_t openFileSystem(char *name);
+index_fs_t createFileSystem(char *name, int size, FILE *pFile);
+
+/**
+ * Check for a given file system's name on the LFS
+ *
+ * @param name            the name of the file system to look for
+ * @return                the index of the file system +1 or FAIL
+ * */
+index_fs_t checkForFileSystemOnLSF(char *name);
+
 #endif

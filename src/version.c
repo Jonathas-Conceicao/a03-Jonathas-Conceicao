@@ -8,15 +8,34 @@
 
 int initfs(char * arquivo, int blocos) {
   if (fopen(arquivo, "rb")) return FAIL; // Fails if fs already exists
+
+  if(checkForFileSystemOnLSF(arquivo) == FAIL)
+
   if (blocos < getNumBlocksMetaData()) return FAIL;
   FILE *pFile;
   pFile = fopen(arquivo, "wb+");
   assert(pFile);
-  return createFileSystem(arquivo, blocos, pFile);
+
+  void *blockList = calloc(blocos, BLOCK_SIZE);
+  assert(blockList);
+
+  fwrite(blockList, BLOCK_SIZE, blocos, pFile);
+
+  free(blockList);
+  fclose(pFile);
+
+  return SUCCESS;
 }
 
 
 indice_fs_t vopenfs(char * arquivo) {
+  assert(arquivo);
+  FILE *disk = fopen(arquivo, "wb+");
+  assert(disk);
+
+  
+
+  //index_fs_t createFileSystem(char *name, int size, FILE *pFile){
   return openFileSystem(arquivo);
 }
 
