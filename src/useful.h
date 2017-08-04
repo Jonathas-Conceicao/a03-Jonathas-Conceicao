@@ -7,6 +7,7 @@ typedef indice_fs_t index_fs_t;
 typedef indice_arquivo_t index_file_t;
 
 typedef int index_block_t;
+typedef int index_descriptor_t;
 
 #define SUCCESS SUCESSO
 #define FAIL FALHA

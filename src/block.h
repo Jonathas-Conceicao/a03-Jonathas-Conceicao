@@ -18,5 +18,12 @@ typedef struct indexer_ {
   index_block_t data[LIMIT];
 }indexer_t;
 
-
+/**
+ * Deletes the content of a file.
+ *
+ * @param  fs   File's File System identifier.
+ * @param  fdId File's File Descriptor identifier inside the FS.
+ * @return      SUCCESS OR FAIL.
+ */
+int deleteFileContentBlock(index_fs_t fs, index_descriptor_t fdId);
 #endif

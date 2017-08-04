@@ -91,6 +91,11 @@ int getFileDescriptorIndexTAA(index_file_t id) {
   return table.file[id].descriptorIndex;
 }
 
+index_fs_t getFileFSTAA(index_file_t id) {
+  id -= 1;
+  return pTable->file[id].fsIndex;
+}
+
 static int idIsValid(index_file_t id) { // If index is out of range or if cell was already empty we have a fail.
   taa_t table = *pTable;
   return (id >= table.size || id < 0 || table.file[id].vBit == 0) ? FAIL : SUCCESS;

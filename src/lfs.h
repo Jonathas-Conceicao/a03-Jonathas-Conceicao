@@ -60,6 +60,14 @@ int getNumBlocksMetaData();
  */
 int createFileDescriptorFS(index_fs_t fs, charzao_t *name);
 
+/** TODO: Bretana, implemente isso aqui. Thanks.
+ * Deletes a file descriptor from the FS.
+ * @param  fs   File's File System.
+ * @param  fdId File's file descriptor ID.
+ * @return      SUCCESS OR FAIL.
+ */
+int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId);
+
 /**
  * Find the index of file in the File System.
  * @method getFileDescriptorIndexFS
