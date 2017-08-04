@@ -9,7 +9,7 @@
 #include "block.h"
 #include "lfs.h"
 
-#define FILES_MAX 500 // Number max of files that can be opened in the SO
+#define MAX_FILES 500 // Number max of files that can be opened in the SO
 
 typedef struct file_ {
   char vBit;
@@ -64,6 +64,13 @@ int isFileOpenTAA(index_file_t id);
  * @return              SUCCESS OR FAIL.
  */
 int closeFileTAA(index_file_t id);
+
+/**
+ * Closes all files from the File System.
+ *
+ * @param  fs File system's index.
+ */
+void closeAllFilesFromFSTAA(index_fs_t fs);
 
 /**
  * Finds file in TAA and returns it's index.

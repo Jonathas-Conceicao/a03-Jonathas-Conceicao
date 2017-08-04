@@ -25,7 +25,7 @@ void destryTAA() {
 }
 
 index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, int descriptorIndex) {
-  if (pTable == NULL) initTAA(FILES_MAX);
+  if (pTable == NULL) initTAA(MAX_FILES);
   taa_t table = *pTable;
   for (int i = 0; i < table.size; ++i) {
     if (table.file[i].vBit > 0 && compareCharzao(table.file[i].name, name) == 0) {
@@ -53,6 +53,17 @@ int isFileOpenTAA(index_file_t id) {
   if (id < 1) return FAIL;
   id -= 1;
   return pTable->file[id].vBit;
+}
+
+int closeAllFilesFromFSTAA(index_fs_t fs) {
+  if (pTable != NULL){  // No file of this FS are open in the TAA;
+    for (int i = 0; i < MAX_FILES; ++i) {
+      if (pTable->file[i].fsIndex == fs) { // If file in position i belongs to the FS.
+        pTable->file[i].vBit = 0;
+      }
+    }
+  }
+  return;
 }
 
 index_file_t getFileIndexTAA(charzao_t *name, index_fs_t fsIndex) {
