@@ -61,6 +61,11 @@ testTAA:
 	@echo -e "$(NOTE)Compiling testTAA$(NC)";
 	$(CC) $(CFLAG) $(OBJ)/taa.o $(OBJ)/useful.o testTAA.c 	-o $(BIN)/a.out -lm
 
+raiz: #Não Nutela, funciona mesmo
+	$(CC) $(CFLAG) src/version.c src/useful.c src/lfs.c src/taa.c src/test.c -o $(BIN)/$(TARGET).out -lm
+	./$(BIN)/$(TARGET).out
+
 clean:
+	@rm *.bin || true
 	@rm $(OBJ)/*.o || true
 	@rm $(BIN)/*.out || true
