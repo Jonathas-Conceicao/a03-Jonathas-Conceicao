@@ -17,6 +17,9 @@ typedef int index_block_t;
 
 #define BLOCK_SIZE BLOCO
 
+// TODO: FIX. Acertar o valor de max Dir, por enquanto está maior pq os testes do pila não não fecha o FS e os arquivos não são limpos.
+#define MAX_DIR 260 // Max number of files in each File System.
+
 typedef char charzao_t;
 
 /**
@@ -36,5 +39,13 @@ int compareCharzao(charzao_t *s1, charzao_t *s2);
  * @param  src         Source string.
  */
 void copyCharzao(char *dest, char *src);
+
+/**
+ * Converts between char* and charzao*.
+ * @method charToCharzao
+ * @param  s1            Orginal String
+ * @return               Referece to new charzao.
+ */
+charzao_t *charToCharzao(char *s1);
 
 #endif //_USEFUL_H
