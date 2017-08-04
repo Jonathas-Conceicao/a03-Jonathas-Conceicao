@@ -25,13 +25,13 @@ NOTE = $(BLUE)
 
 #################################################################################
 all: grade
+	@echo -e "$(NOTE)Grading$(NC)";
+	./$(BIN)/$(TARGET).out
 
 grade: version.o useful.o taa.o lfs.o block.o
 #@echo -e "$(WARNIGN)Here we compile the test[?]$(NC)";
 	@echo -e "$(NOTE)Compiling all together$(NC)";
 	$(CC) $(CFLAG) $(OBJ)/version.o $(SRC)/test.c 	-o $(BIN)/$(TARGET).out -lm
-	@echo -e "$(NOTE)Grading$(NC)";
-	./$(BIN)/$(TARGET).out
 
 block.o: version.o useful.o $(OBJ)/version.o $(OBJ)/useful.o $(SRC)/block.c
 	@echo -e "$(NOTE)Compiling block.c$(NC)";
