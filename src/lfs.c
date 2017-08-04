@@ -9,8 +9,8 @@
 
 fsList_t *pFsList = NULL;
 
-static int getNextEmptyPostionLFS();
-static int getNextEmptyPostionFS(index_fs_t fs);
+static int getNextEmptyPositionLFS();
+static int getNextEmptyPositionFS(index_fs_t fs);
 
 fsList_t *initLFS(int size) {
   if (pFsList == NULL) {
@@ -34,15 +34,18 @@ int getNumBlocksMetaData() {
 }
 
 int createFileSystem(char *name, int size, FILE *pFile) {
-  if (pFsList == NULL) initLFS(FS_MAX);
-  int pos = getNextEmptyPostionLFS();
+  if (pFsList == NULL) initLFS(FS_MAX); // if the list os fs is NULL creates it
+
+  int pos = getNextEmptyPositionLFS();
   if (pos < 0) return FAIL;
-  pFsList->list[pos].vBit = 1;
-  pFsList->list[pos].open = 0; // FS is initialized but not open.
+
+  pFsList->list[pos].vBit       = 1;
+  pFsList->list[pos].open       = 0; // FS is initialized but not open.
   strcpy(  pFsList->list[pos].name, name);
-  pFsList->list[pos].numBlock = size;
-  pFsList->list[pos].disk = pFile;
-  pFsList->list[pos].blockList = calloc(size, BLOCK_SIZE);
+  pFsList->list[pos].numBlock   = size;
+  pFsList->list[pos].disk       = pFile;
+  pFsList->list[pos].blockList  = calloc(size, BLOCK_SIZE);
+
   return SUCCESS;
 }
 
@@ -58,7 +61,7 @@ index_fs_t openFileSystem(char *name) {
 
 int createFileDescriptorFS(index_fs_t fs, charzao_t *name) {
   fs -= 1;
-  int pos = getNextEmptyPostionFS(fs);
+  int pos = getNextEmptyPositionFS(fs);
   if (pos < 0) {
     return FAIL;
   }
@@ -81,7 +84,7 @@ int getFileDescriptorIndexFS(index_fs_t fs, charzao_t *name) {
   return FAIL;
 }
 
-static int getNextEmptyPostionFS(index_fs_t fs) {
+static int getNextEmptyPositionFS(index_fs_t fs) {
   file_descriptor_t *pFdList = pFsList->list[fs].blockList;
   for (int i = 0; i < MAX_DIR; ++i) {
     if (pFdList[i].vBit == 0) {
@@ -91,7 +94,7 @@ static int getNextEmptyPostionFS(index_fs_t fs) {
   return -1;
 }
 
-static int getNextEmptyPostionLFS() {
+static int getNextEmptyPositionLFS() {
   for (int i = 0; i < pFsList->size; ++i) {
     if (pFsList->list[i].vBit == 0) {
       return i;

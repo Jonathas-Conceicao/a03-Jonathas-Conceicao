@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+//#include "simplegrade.h"
 
 #define SUCESSO 1
 #define FALHA 0
@@ -44,6 +45,12 @@ int initfs(char * arquivo, int blocos);
  */
 indice_fs_t vopenfs(char * arquivo);
 
+/*
+ * Fecha um sistema de arquivos.
+ *
+ * @param handler   o handler do descritor de sistema de arquivo
+ */
+void vclosefs(indice_fs_t handler);
 
 /** Abre um arquivo versionado.
  *

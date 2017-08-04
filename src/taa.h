@@ -1,12 +1,13 @@
 #ifndef _TAA_H
 #define _TAA_H
 
+#include <time.h>
+#include <stdint.h>
+
 #include "version.h"
 #include "useful.h"
 #include "block.h"
 #include "lfs.h"
-#include <time.h>
-#include <stdint.h>
 
 #define FILES_MAX 500 // Number max of files that can be opened in the SO
 
