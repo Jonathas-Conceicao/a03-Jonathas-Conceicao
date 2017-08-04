@@ -16,7 +16,7 @@ typedef struct file_ {
   charzao_t name[255];
   index_fs_t fsIndex;
   int mode;
-  int descriptorIndex;
+  index_descriptor_t descriptorIndex;
 }file_t;
 
 // typedef file_t* taa_t;
@@ -48,7 +48,7 @@ void destryTAA();
  * @param  descriptorIndex   Index of file's descriptor in the directory.
  * @return                   File's index, or -1 if failed.
  */
-index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, int descriptorIndex);
+index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, index_descriptor_t descriptorIndex);
 
 /**
  * Checks if a file is already opened on TAA.
@@ -75,6 +75,13 @@ int closeFileTAA(index_file_t id);
 index_file_t getFileIndexTAA(charzao_t *name, index_fs_t fsIndex);
 
 /**
+ * Returns file's File System.
+ * @param  id File's identifier.
+ * @return    File's FS.
+ */
+index_fs_t getFileFSTAA(index_file_t id);
+
+/**
  * Finds file's mode.
  *
  * @param  id          File's index in table.
@@ -88,6 +95,6 @@ int getFileMode(index_file_t id);
  * @param  id                     File's index in table.
  * @return                        File's descriptor's index, or -1 if falied.
  */
-int getFileDescriptorIndexTAA(index_file_t id);
+index_descriptor_t getFileDescriptorIndexTAA(index_file_t id);
 
 #endif

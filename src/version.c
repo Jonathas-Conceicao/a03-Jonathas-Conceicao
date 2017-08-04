@@ -38,9 +38,8 @@ indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
   return openFileTAA(name, fs, acesso, id);
 }
 
-int vclose(indice_arquivo_t arquivo){
-  arquivo = arquivo;
-  return 0;
+int vclose(indice_arquivo_t arquivo) {
+  return closeFileTAA(arquivo);
 }
 
 uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
@@ -58,8 +57,13 @@ int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
 }
 
 int vdelete(indice_arquivo_t arquivo){
-  arquivo = arquivo;
-  return 0;
+  vclose(arquivo); // Closes the file before doing anything else.
+  index_fs_t fs = getFileFSTAA(arquivo);
+  index_descriptor_t fdId = getFileDescriptorIndexTAA(arquivo);
+  if (deleteFileContentBlock(fs, fdId) == FAIL) return FAIL; // If we failed to delete the blocks we failed to delete the file itself.
+  if (deleteFileDescriptorFS(fs, fdId) == FAIL) return FAIL; // If we failed to delete the file descriptor we failed to delete the file itself.
+  // If deleting the file descriptor and the file content was successful we are done.
+  return SUCCESS;
 }
 
 int vseek(indice_arquivo_t arquivo, uint32_t seek){
