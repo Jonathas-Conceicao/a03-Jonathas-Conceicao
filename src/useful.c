@@ -10,3 +10,7 @@ void copyCharzao(char *dest, char *src) {
   strcpy(dest, src);
   return;
 }
+
+charzao_t *charToCharzao(char * s1) {
+  return (charzao_t *) s1;
+}
