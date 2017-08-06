@@ -5,7 +5,7 @@
 #include "useful.h"
 #include "block.h"
 
-#define FS_MAX 5
+#define FS_MAX 15
 
 typedef struct file_descriptor_ {
   char vBit; //Indicates rather the descriptor is free.
