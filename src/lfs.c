@@ -91,7 +91,7 @@ index_fs_t createFileSystem(char *name, int size, FILE *pFile){
   pFsList->list[pos].numBlock   = size;
   pFsList->list[pos].disk       = pFile;
   pFsList->list[pos].blockList  = calloc(size, BLOCK_SIZE);
-  initIndexerBlock(pFsList->list[pos].blockList, 0, size); // Initializes the first indexer.
+  initIndexerBlock(getBlockListFS(pos+1), 0, size - (getNumBlocksMetaData() - 1)); // Initializes the first indexer.
 
   //fprintf(stderr, "\n\nFile system \"%s\" in position \"%d\"\n\n", pFsList->list[pos].name, pos);
 

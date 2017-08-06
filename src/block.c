@@ -30,9 +30,8 @@ int initIndexerBlock(indexer_t *blockList, index_block_t pos, int limit) {
   blockList[pos].emptyBlock = 1; // Set the next empty block as the first block after the index
   blockList[pos].maxRange = max(MAX_BLOCKS_INDEXER, limit); // Set the maxRange of the indexer, for the system my have less blocks then it can index.
   block_t *aux = (block_t *) blockList; // First position after the indexer, i.e. first data block
-  for (unsigned int i = 1; i < limit; ++i) {
+  for (int i = 1; i < limit; ++i) {
     aux[i].metaData.next[0] = i+1; // Sets the next empty block to be used as the next block after this one.
-    // printf("Interactions :%i of %i\n", i, MAX_BLOCKS_INDEXER -1);
   }
   return SUCCESS;
 }
@@ -46,7 +45,6 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
   uint32_t numBlocks = ceil ((float) size / (float) BLOCK_DATA_SIZE); // Count and round up the number of blocks needed.
   indexer_t *indexer = getBlockListFS(fs);
   uint32_t freeBlocks = countFreeBlocksOnIndexerBlock(indexer);
-  // if (freeBlocks == 0) printBlock(&indexer[1]);
   // printf("DEBUG: Num of free blocks %i\n", freeBlocks);
   if (numBlocks > freeBlocks) {
     return FAIL; //TODO FIX THIS.
