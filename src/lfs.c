@@ -100,3 +100,13 @@ index_fs_t checkForFileSystemOnLSF(char *name) {
   }
   return FAIL;
 }
+
+void closeFileSystemOnLSF(index_fs_t index){
+  if(pFsList != NULL)
+    pFsList->list[index].vBit = 0;
+}
+
+void openFileSystemOnLSF(index_fs_t index){
+  if(pFsList != NULL)
+    pFsList->list[index].vBit = 1;
+}

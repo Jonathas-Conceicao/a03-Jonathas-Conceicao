@@ -60,7 +60,7 @@ int getNumBlocksMetaData();
  */
 int createFileDescriptorFS(index_fs_t fs, charzao_t *name);
 
-/** TODO: Bretana, implemente isso aqui. Thanks.
+/** 
  * Deletes a file descriptor from the FS.
  * @param  fs   File's File System.
  * @param  fdId File's file descriptor ID.
@@ -94,5 +94,19 @@ index_fs_t createFileSystem(char *name, int size, FILE *pFile);
  * @return                the index of the file system +1 or FAIL
  * */
 index_fs_t checkForFileSystemOnLSF(char *name);
+
+/**
+ * Mark the file system as closed
+ *
+ * @param  index          index of the file system to be closed
+ */
+void closeFileSystemOnLSF(index_fs_t index);
+
+/**
+ * Mark the file system as open
+ *
+ * @param  index          index of the file system to be open
+ */
+void openFileSystemOnLSF(index_fs_t index);
 
 #endif
