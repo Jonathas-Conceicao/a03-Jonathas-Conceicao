@@ -95,6 +95,25 @@ index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId);
  */
 indexer_t *getBlockListFS(index_fs_t fs);
 
+/** TODO: Bretana Implemente essas funções para lidar com a versão do arquivo.
+ * Returns the current number of versions that the file has.
+ *
+ * @param  fs                Index of file's FS.
+ * @param  fdId              Index of file's File Descriptor.
+ * @return                   Number of versions.
+ */
+int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId);
+
+/** TODO: Bretana Implemente essas funções para lidar com a versão do arquivo.
+ * Increments file's version.
+ *
+ * @param  fs                Index of file's FS.
+ * @param  fdId              Index of file's File Descriptor.
+ * @param  newFirstBlock     File's first block for new version.
+ * @return                   SUCCESS or FAIL.
+ */
+void incNumVersionFile(index_fs_t fs, index_descriptor_t fdId, index_block_t newFirstBlock);
+
 /**
  * Creates the file system based on it's name and returns it's file handler.
  *
