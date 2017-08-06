@@ -40,12 +40,19 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
 }
 
 indexer_t *getBlockListFS(index_fs_t fs){
-  fs -= 1;
   assert(pFsList);
+  fs -= 1;
 
   // is the initial block list pointer plus the number of file descriptor (one per file) times the size of a file descriptor
   return (pFsList->list[fs].blockList + MAX_DIR * sizeof(file_descriptor_t));
 
+}
+
+index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId) {
+  assert(pFsList);
+  fs -= 1;
+  file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
+  return (listFD[fdId].firstBlock);
 }
 
 int getNumBlocksMetaData() {
