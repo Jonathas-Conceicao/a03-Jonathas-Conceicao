@@ -87,6 +87,14 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId);
  */
 int getFileDescriptorIndexFS(index_fs_t fs, charzao_t *name);
 
+/** TODO: Bretana implementa isso aqui também. Thanks.
+ * Returns the referece for the block list (AFTER the directories) of the File System.
+ *
+ * @param  fs             Index of the FS.
+ * @return                referece to the blocks (first block after the directories).
+ */
+index_block_t *getBlockListFS(index_fs_t fs);
+
 /**
  * Opens the file system based on it's name and returns it's file handler.
  *
