@@ -28,9 +28,28 @@ void destryLFS() {
   free(pFsList);
 }
 
+int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
+  if((pFsList == NULL) || (fs > pFsList->size)) return FAIL;
+
+  void *list = pFsList->list[fs].blockList;
+  if(list == NULL) return FAIL;
+
+  file_descriptor_t *listFD = (file_descriptor_t *)list;
+  listFD[fdId].vBit = 0;
+  return SUCCESS;
+}
+
+indexer_t *getBlockListFS(index_fs_t fs){
+  assert(pFsList);
+  
+  // is the initial block list pointer plus the number of file descriptor (one per file) times the size of a file descriptor
+  return (pFsList->list[fs].blockList + MAX_DIR * sizeof(file_descriptor_t));
+
+}
+
 int getNumBlocksMetaData() {
   // (File Descriptor Size x 256 entrys) / block size + 2 blocks (FAT and At least one data block)
-  return ( ( ((sizeof(file_descriptor_t) * 256)) / (BLOCK_SIZE) ) + 2 );
+  return ( ( ((sizeof(file_descriptor_t) * MAX_DIR)) / (BLOCK_SIZE) ) + 2 );
 }
 
 int createFileSystem(char *name, int size, FILE *pFile) {
