@@ -55,7 +55,7 @@ int isFileOpenTAA(index_file_t id) {
   return pTable->file[id].vBit;
 }
 
-int closeAllFilesFromFSTAA(index_fs_t fs) {
+void closeAllFilesFromFSTAA(index_fs_t fs) {
   if (pTable != NULL){  // No file of this FS are open in the TAA;
     for (int i = 0; i < MAX_FILES; ++i) {
       if (pTable->file[i].fsIndex == fs) { // If file in position i belongs to the FS.
