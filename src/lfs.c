@@ -142,7 +142,7 @@ static int getNextEmptyPositionLFS() {
 }
 
 index_fs_t checkForFileSystemOnLSF(char *name) {
-  if(pFsList == NULL) return FAIL;
+  if(pFsList == NULL) return -1;
   for (int i = 0; i < pFsList->size; ++i) {
     if(strcmp(pFsList->list[i].name, name) == 0)
       return i;
