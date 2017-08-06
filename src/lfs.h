@@ -70,13 +70,22 @@ int createFileDescriptorFS(index_fs_t fs, charzao_t *name);
 int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId);
 
 /**
- * Find the index of file in the File System.
+ * Find the index of file's descriptor in the File System.
  * @method getFileDescriptorIndexFS
- * @param  fs                       Idex of the file's FS.
+ * @param  fs                       Index of the file's FS.
  * @param  name                     File's name.
  * @return                          File's descriptor index or FAIL if file was not found.
  */
 int getFileDescriptorIndexFS(index_fs_t fs, charzao_t *name);
+
+/**
+ * Returns a pointer to the list of first blocks that the file has.
+ *
+ * @param  fs                Index of the file's FS.
+ * @param  fdId              File's descriptor ID.
+ * @return                   Reference to file's first block list.
+ */
+index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId);
 
 /** TODO: Bretana implementa isso aqui também. Thanks.
  * Returns the referece for the block list (AFTER the directories) of the File System.
