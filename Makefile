@@ -41,7 +41,7 @@ test.o: $(SRC)/test.c version.o
 
 block.o: version.o useful.o $(OBJ)/version.o $(OBJ)/useful.o $(SRC)/block.c
 	@echo -e "$(NOTE)Compiling block.c$(NC)";
-	$(CC) $(CFLAG) -c $(SRC)/block.c -o $(OBJ)/block.o
+	$(CC) $(CFLAG) -c $(SRC)/block.c -o $(OBJ)/block.o -lm
 
 lfs.o: version.o useful.o $(OBJ)/version.o $(OBJ)/useful.o $(SRC)/lfs.c
 	@echo -e "$(NOTE)Compiling lfs.c$(NC)";

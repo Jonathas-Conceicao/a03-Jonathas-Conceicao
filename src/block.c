@@ -1,17 +1,38 @@
 #include <stdio.h>
+#include <math.h>
 
 #include "block.h"
 #include "lfs.h"
 
 static void addEmptyBlock(indexer_t *pIndexer, index_block_t id);
 static int fileHasIndexerBlock(indexer_t *blockList);
+static uint32_t countFreeBlocksOnIndexerBlock(indexer_t *pIndexer);
+static void printBlock(block_t *);
+static int max(int a, int b);
 
-int initIndexerBlock(indexer_t *blockList, index_block_t pos) {
+static int max(int a, int b) {
+  return (a >= b) ? a : b;
+}
+
+static void printBlock(block_t *b) {
+  fprintf(stderr, " --- PRINTING BLOCK ---\n");
+  fprintf(stderr, "Block's pointer: %p\n", b);
+  fprintf(stderr, "Block's version indexes:\n");
+  for (unsigned i = 0; i < MAXVERSIONS; ++i) {
+    fprintf(stderr, "%i: %i\n", i+1, b->metaData.next[i]);
+  }
+  fprintf(stderr, "Block's content:\n------\n%s\n------\n", b->data);
+  return;
+}
+
+int initIndexerBlock(indexer_t *blockList, index_block_t pos, int limit) {
   blockList[pos].nextIndexer = -1; // Indexer has no next indexer yet.
-  blockList[pos].emptyBlock = 0; // Set the next empty block as the first block after the index
-  block_t *aux = (block_t *) &blockList[1]; // First position after the indexer, i.e. first data block
-  for (unsigned int i = 0; i < MAX_BLOCKS_INDEXER - 1; ++i) {
+  blockList[pos].emptyBlock = 1; // Set the next empty block as the first block after the index
+  blockList[pos].maxRange = max(MAX_BLOCKS_INDEXER, limit); // Set the maxRange of the indexer, for the system my have less blocks then it can index.
+  block_t *aux = (block_t *) blockList; // First position after the indexer, i.e. first data block
+  for (unsigned int i = 1; i < limit; ++i) {
     aux[i].metaData.next[0] = i+1; // Sets the next empty block to be used as the next block after this one.
+    // printf("Interactions :%i of %i\n", i, MAX_BLOCKS_INDEXER -1);
   }
   return SUCCESS;
 }
@@ -19,6 +40,18 @@ int initIndexerBlock(indexer_t *blockList, index_block_t pos) {
 void setNextIndexerBlock(indexer_t *blockList, index_block_t src, index_block_t nxt) {
   blockList[src].nextIndexer = nxt;
   return;
+}
+
+int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer) {
+  uint32_t numBlocks = ceil ((float) size / (float) BLOCK_DATA_SIZE); // Count and round up the number of blocks needed.
+  indexer_t *indexer = getBlockListFS(fs);
+  uint32_t freeBlocks = countFreeBlocksOnIndexerBlock(indexer);
+  // if (freeBlocks == 0) printBlock(&indexer[1]);
+  // printf("DEBUG: Num of free blocks %i\n", freeBlocks);
+  if (numBlocks > freeBlocks) {
+    return FAIL; //TODO FIX THIS.
+  }
+  return FAIL;
 }
 
 int deleteFileContentBlock(index_fs_t fs, index_descriptor_t fdId) {
@@ -37,6 +70,18 @@ int deleteFileContentBlock(index_fs_t fs, index_descriptor_t fdId) {
     }
   }
   return SUCCESS;
+}
+
+static uint32_t countFreeBlocksOnIndexerBlock(indexer_t *pIndexer) {
+  index_block_t freeIndex = pIndexer[0].emptyBlock;
+  block_t *freeBlock;
+  uint32_t numFreeBlocks = 0;
+  while (freeIndex != 0) { // While we still have free blocks to check.
+    freeBlock = (block_t *) &pIndexer[freeIndex]; // Get reference to next free block;
+    freeIndex = freeBlock->metaData.next[0]; // Check if theres another free block.
+    numFreeBlocks += 1; // Count the free block found.
+  }
+  return numFreeBlocks;
 }
 
 static int fileHasIndexerBlock(indexer_t *blockList) {
