@@ -40,8 +40,9 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
 }
 
 indexer_t *getBlockListFS(index_fs_t fs){
+  fs -= 1;
   assert(pFsList);
-  
+
   // is the initial block list pointer plus the number of file descriptor (one per file) times the size of a file descriptor
   return (pFsList->list[fs].blockList + MAX_DIR * sizeof(file_descriptor_t));
 
