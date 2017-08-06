@@ -61,7 +61,7 @@ int getNumBlocksMetaData();
  */
 int createFileDescriptorFS(index_fs_t fs, charzao_t *name);
 
-/** TODO: Bretana implenta isso aqui. Tahnks.
+/** TODO {DONE}: Bretana implenta isso aqui. Tahnks.
  * Deletes a file descriptor from the FS.
  * @param  fs   File's File System.
  * @param  fdId File's file descriptor ID.
@@ -87,7 +87,7 @@ int getFileDescriptorIndexFS(index_fs_t fs, charzao_t *name);
  */
 index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId);
 
-/** TODO: Bretana implementa isso aqui também. Thanks.
+/** TODO {DONE}: Bretana implementa isso aqui também. Thanks.
  * Returns the referece for the block list (AFTER the directories) of the File System.
  *
  * @param  fs             Index of the FS.
@@ -95,7 +95,7 @@ index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId);
  */
 indexer_t *getBlockListFS(index_fs_t fs);
 
-/** TODO: Bretana Implemente essas funções para lidar com a versão do arquivo.
+/** TODO {DONE}: Bretana Implemente essas funções para lidar com a versão do arquivo.
  * Returns the current number of versions that the file has.
  *
  * @param  fs                Index of file's FS.
@@ -104,7 +104,7 @@ indexer_t *getBlockListFS(index_fs_t fs);
  */
 int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId);
 
-/** TODO: Bretana Implemente essas funções para lidar com a versão do arquivo.
+/** TODO {DONE}: Bretana Implemente essas funções para lidar com a versão do arquivo.
  * Increments file's version.
  *
  * @param  fs                Index of file's FS.
@@ -128,9 +128,9 @@ index_fs_t createFileSystem(char *name, int size, FILE *pFile);
  * Check for a given file system's name on the LFS
  *
  * @param name            the name of the file system to look for
- * @return                the index of the file system +1 or FAIL
+ * @return                the index of the file system or -1 (in case does not find it)
  * */
-index_fs_t checkForFileSystemOnLSF(char *name);
+int checkForFileSystemOnLSF(char *name);
 
 /**
  * Mark the file system as closed
@@ -145,5 +145,26 @@ void closeFileSystemOnLSF(index_fs_t index);
  * @param  index          index of the file system to be open
  */
 void openFileSystemOnLSF(index_fs_t index);
+
+/**
+ * Mark the file system as invalid (or the position as unused)
+ *
+ * @param  index          index of the file system to be deleted
+ */
+void deleteFileSystemFromLFS(index_fs_t index);
+
+/**
+ * Write the file system info to its disk
+ *
+ * @param  index          index of the file system to be write down
+ */
+void syncToDisk(index_fs_t index);
+
+/**
+ * Check if a given index for fs is valid
+ *
+ * @param handler       the FS index to check
+ */
+void checkIndexForFS(index_fs_t handler);
 
 #endif
