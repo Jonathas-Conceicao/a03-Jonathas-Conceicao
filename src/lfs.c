@@ -60,29 +60,20 @@ int getNumBlocksMetaData() {
   return ( ( ((sizeof(file_descriptor_t) * MAX_DIR)) / (BLOCK_SIZE) ) + 2 );
 }
 
-int createFileSystem(char *name, int size, FILE *pFile) {
+index_fs_t createFileSystem(char *name, int size, FILE *pFile){
   if (pFsList == NULL) initLFS(FS_MAX); // if the list os fs is NULL creates it
 
   int pos = getNextEmptyPositionLFS();
   if (pos < 0) return FAIL;
 
   pFsList->list[pos].vBit       = 1;
-  pFsList->list[pos].open       = 0; // FS is initialized but not open.
+  pFsList->list[pos].open       = 0;
   strcpy(  pFsList->list[pos].name, name);
   pFsList->list[pos].numBlock   = size;
   pFsList->list[pos].disk       = pFile;
   pFsList->list[pos].blockList  = calloc(size, BLOCK_SIZE);
-  return SUCCESS;
-}
 
-index_fs_t openFileSystem(char *name) {
-  for (int i = 0; i < pFsList->size; ++i) {
-    if(strcmp(pFsList->list[i].name, name) == 0) {
-      pFsList->list[i].open = 1; // Makes FS as open.
-      return (i+1);
-    }
-  }
-  return FAIL;
+  return pos+1;
 }
 
 int createFileDescriptorFS(index_fs_t fs, charzao_t *name) {
@@ -127,4 +118,23 @@ static int getNextEmptyPositionLFS() {
     }
   }
   return -1;
+}
+
+index_fs_t checkForFileSystemOnLSF(char *name) {
+  if(pFsList == NULL) return FAIL;
+  for (int i = 0; i < pFsList->size; ++i) {
+    if(strcmp(pFsList->list[i].name, name) == 0)
+      return (i+1);
+  }
+  return FAIL;
+}
+
+void closeFileSystemOnLSF(index_fs_t index){
+  if(pFsList != NULL)
+    pFsList->list[index].open = 0;
+}
+
+void openFileSystemOnLSF(index_fs_t index){
+  if(pFsList != NULL)
+    pFsList->list[index].open = 1;
 }

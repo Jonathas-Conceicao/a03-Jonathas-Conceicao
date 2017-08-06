@@ -15,14 +15,21 @@ int initfs(char * arquivo, int blocos) {
   if (blocos < getNumBlocksMetaData()) return FAIL;
   pFile = fopen(arquivo, "wb+");
   assert(pFile);
+
   return createFileSystem(arquivo, blocos, pFile);
 }
 
 
 indice_fs_t vopenfs(char * arquivo) {
-  return openFileSystem(arquivo);
+  index_fs_t pos = checkForFileSystemOnLSF(arquivo);
+  if(pos == FAIL) return FAIL;
+
+  openFileSystemOnLSF(pos);
+
+  return pos +1;
 }
 
+// TODO
 void vclosefs(indice_fs_t handler){
   handler = handler;
 }
