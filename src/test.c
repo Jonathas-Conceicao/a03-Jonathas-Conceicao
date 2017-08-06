@@ -264,7 +264,7 @@ void test_date(){
 
 
 int main(){
-    /*test_too_few_blocks();
+    test_too_few_blocks();
     test_enough_blocks();
     test_vfs_exists();
     test_utf_8();
@@ -272,7 +272,7 @@ int main(){
     test_one_file_one_block();
     test_multiple_versions();
     test_multiple_blocks();
-    test_seek(); */
+    test_seek();
     test_delete();
     test_date();
 	printf("Grading \n");
