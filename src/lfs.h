@@ -3,6 +3,7 @@
 
 #include "version.h"
 #include "useful.h"
+#include "block.h"
 
 #define FS_MAX 5
 
@@ -60,7 +61,7 @@ int getNumBlocksMetaData();
  */
 int createFileDescriptorFS(index_fs_t fs, charzao_t *name);
 
-/** 
+/** TODO: Bretana implenta isso aqui. Tahnks.
  * Deletes a file descriptor from the FS.
  * @param  fs   File's File System.
  * @param  fdId File's file descriptor ID.
@@ -83,7 +84,7 @@ int getFileDescriptorIndexFS(index_fs_t fs, charzao_t *name);
  * @param  fs             Index of the FS.
  * @return                referece to the blocks (first block after the directories).
  */
-index_block_t *getBlockListFS(index_fs_t fs);
+indexer_t *getBlockListFS(index_fs_t fs);
 
 /**
  * Creates the file system based on it's name and returns it's file handler.

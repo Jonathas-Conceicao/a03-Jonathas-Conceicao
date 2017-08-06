@@ -19,7 +19,7 @@ typedef int index_descriptor_t;
 #define BLOCK_SIZE BLOCO
 
 // TODO: FIX. Acertar o valor de max Dir, por enquanto está maior pq os testes do pila não não fecha o FS e os arquivos não são limpos.
-#define MAX_DIR 260 // Max number of files in each File System.
+#define MAX_DIR 256 // Max number of files in each File System.
 
 typedef char charzao_t;
 
