@@ -3,7 +3,7 @@ SHELL=/bin/bash
 TARGET = a03-conferidor-de-magias
 
 CC = gcc
-CFLAG = -std=c99 -Wall -Wextra #-Werror # -g
+CFLAG = -std=c11 -Wall -Wextra #-Werror -g
 
 # Folders
 OBJ = obj
@@ -25,6 +25,13 @@ NOTE = $(BLUE)
 
 #################################################################################
 all: build
+
+rebuild: clean build
+
+debug:
+	$(eval CFLAG += -g)
+
+rebuild-debug: clean debug rebuild
 
 #@echo -e "$(WARNIGN)Here we compile the test[?]$(NC)";
 build: version.o useful.o taa.o lfs.o block.o test.o

@@ -39,6 +39,25 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
   return SUCCESS;
 }
 
+int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
+  if(pFsList == NULL) return FAIL;
+
+  file_descriptor_t *desc = (file_descriptor_t *)pFsList->list[fs].blockList;
+
+  return desc[fdId].numVersion;
+}
+
+void incNumVersionFile(index_fs_t fs, index_descriptor_t fdId, index_block_t newFirstBlock){
+  if(pFsList == NULL) return;
+
+  // Inc
+  file_descriptor_t *desc = (file_descriptor_t *)pFsList->list[fs].blockList;
+  int v = desc[fdId].numVersion++;
+
+  // Set new first block
+  desc[fdId].firstBlock[v] = newFirstBlock;
+}
+
 indexer_t *getBlockListFS(index_fs_t fs){
   assert(pFsList);
   fs -= 1;
@@ -73,6 +92,8 @@ index_fs_t createFileSystem(char *name, int size, FILE *pFile){
   pFsList->list[pos].disk       = pFile;
   pFsList->list[pos].blockList  = calloc(size, BLOCK_SIZE);
   initIndexerBlock(pFsList->list[pos].blockList, 0, size); // Initializes the first indexer.
+
+  //fprintf(stderr, "\n\nFile system \"%s\" in position \"%d\"\n\n", pFsList->list[pos].name, pos);
 
   return pos+1;
 }
@@ -122,20 +143,46 @@ static int getNextEmptyPositionLFS() {
 }
 
 index_fs_t checkForFileSystemOnLSF(char *name) {
-  if(pFsList == NULL) return FAIL;
+  if(pFsList == NULL) return -1;
   for (int i = 0; i < pFsList->size; ++i) {
     if(strcmp(pFsList->list[i].name, name) == 0)
-      return (i+1);
+      return i;
   }
-  return FAIL;
+  return -1;
+}
+
+void deleteFileSystemFromLFS(index_fs_t index){
+  checkIndexForFS(index);
+  if(pFsList != NULL)
+    pFsList->list[index].vBit = 0;
 }
 
 void closeFileSystemOnLSF(index_fs_t index){
+  checkIndexForFS(index);
   if(pFsList != NULL)
     pFsList->list[index].open = 0;
 }
 
 void openFileSystemOnLSF(index_fs_t index){
+  checkIndexForFS(index);
   if(pFsList != NULL)
     pFsList->list[index].open = 1;
+}
+
+void syncToDisk(index_fs_t index){
+  checkIndexForFS(index);
+  if((pFsList == NULL) || (pFsList->list[index].blockList == NULL)) return;
+
+  size_t result = fwrite(pFsList->list[index].blockList, pFsList->list[index].numBlock, BLOCK_SIZE, pFsList->list[index].disk);
+  if(result != (unsigned)pFsList->list[index].numBlock){
+    fprintf(stderr, "\nThere was some problem writen on the file");
+    assert(0);
+  }
+}
+
+void checkIndexForFS(index_fs_t handler){
+  if((handler < 0) || (handler > pFsList->size) || (handler > FS_MAX)){
+    fprintf(stderr, "\nInvalid file handler (%d) should be between 0 and %d", handler, FS_MAX);
+    assert(0);
+  }
 }

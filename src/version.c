@@ -12,6 +12,11 @@ int initfs(char * arquivo, int blocos) {
     fclose(pFile);
     return FAIL; // Fails if fs already exists
   }
+
+  index_fs_t pos = checkForFileSystemOnLSF(arquivo);
+  if(pos >= 0)
+    deleteFileSystemFromLFS(pos);
+
   if (blocos < getNumBlocksMetaData()) return FAIL;
   pFile = fopen(arquivo, "wb+");
   assert(pFile);
@@ -22,16 +27,24 @@ int initfs(char * arquivo, int blocos) {
 
 indice_fs_t vopenfs(char * arquivo) {
   index_fs_t pos = checkForFileSystemOnLSF(arquivo);
-  if(pos == FAIL) return FAIL;
-
+  if(pos < 0) return FAIL;
+  
   openFileSystemOnLSF(pos);
 
   return pos +1;
 }
 
 // TODO
+// This function should
+// 1) Close all files on that file system
+// 2) Write the information about this FS on disk (its binary file)
+// 3) Free this FS allocated memory
+// 4) Mark this FS as closed
 void vclosefs(indice_fs_t handler){
-  handler = handler;
+  checkIndexForFS(handler);
+  closeAllFilesFromFSTAA(handler);
+  syncToDisk(handler);
+  closeFileSystemOnLSF(handler -1);
 }
 
 
