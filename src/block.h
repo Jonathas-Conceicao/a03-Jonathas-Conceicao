@@ -9,7 +9,7 @@
 #define MAX_BLOCKS_INDEXER (BLOCK_SIZE / sizeof(int)) - 2
 
 typedef struct block_content_ {
-  index_block_t version[MAXVERSIONS];
+  index_block_t next[MAXVERSIONS];
 }block_content_t;
 
 typedef struct block_ {

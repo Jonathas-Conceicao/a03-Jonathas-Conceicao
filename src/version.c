@@ -7,9 +7,12 @@
 #include "taa.h"
 
 int initfs(char * arquivo, int blocos) {
-  if (fopen(arquivo, "rb")) return FAIL; // Fails if fs already exists
+  FILE *pFile = fopen(arquivo, "rb");
+  if (pFile != NULL) {
+    fclose(pFile);
+    return FAIL; // Fails if fs already exists
+  }
   if (blocos < getNumBlocksMetaData()) return FAIL;
-  FILE *pFile;
   pFile = fopen(arquivo, "wb+");
   assert(pFile);
   return createFileSystem(arquivo, blocos, pFile);
@@ -29,7 +32,7 @@ indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
   version = version;
   charzao_t *name = charToCharzao(nome);
   if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 0) {
-    if (acesso == READ) {
+    if (acesso == READ || acesso == READ_AND_WRITE) {
       return FAIL;
     }
     if (createFileDescriptorFS(fs, name) == FAIL) return FAIL;

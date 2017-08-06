@@ -50,7 +50,7 @@ indexer_t *getBlockListFS(index_fs_t fs){
 
 index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId) {
   assert(pFsList);
-  fs -= 1;
+  // fs -= 1;
   file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
   return (listFD[fdId].firstBlock);
 }
@@ -72,7 +72,6 @@ int createFileSystem(char *name, int size, FILE *pFile) {
   pFsList->list[pos].numBlock   = size;
   pFsList->list[pos].disk       = pFile;
   pFsList->list[pos].blockList  = calloc(size, BLOCK_SIZE);
-
   return SUCCESS;
 }
 
