@@ -172,9 +172,9 @@ void syncToDisk(index_fs_t index){
   checkIndexForFS(index);
   if((pFsList == NULL) || (pFsList->list[index].blockList == NULL)) return;
 
-  size_t result = fwrite(pFsList->list[index].blockList, pFsList->list[index].numBlock, BLOCK_SIZE, pFsList->list[index].disk);
+  size_t result = fwrite(pFsList->list[index].blockList, BLOCK_SIZE, pFsList->list[index].numBlock, pFsList->list[index].disk);
   if(result != (unsigned)pFsList->list[index].numBlock){
-    fprintf(stderr, "\nThere was some problem writen on the file");
+    fprintf(stderr, "\nThere was some problem writen on the file Expected write %lu, but wrote %lu.\n", result, (size_t)pFsList->list[index].numBlock);
     assert(0);
   }
 }
