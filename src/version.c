@@ -9,11 +9,6 @@
 int initfs(char * arquivo, int blocos) {
   if (fopen(arquivo, "rb")) return FAIL; // Fails if fs already exists
 
-  int pos = checkForFileSystemOnLSF(arquivo);
-  if(pos != FAIL){
-    closeFileSystemOnLSF(pos); // marks the old position as not used
-  }
-
   if (blocos < getNumBlocksMetaData()) return FAIL;
   FILE *pFile;
   pFile = fopen(arquivo, "wb+");
@@ -28,9 +23,11 @@ indice_fs_t vopenfs(char * arquivo) {
   if(pos == FAIL) return FAIL;
 
   openFileSystemOnLSF(pos);
+
   return pos +1;
 }
 
+// TODO
 void vclosefs(indice_fs_t handler){
   handler = handler;
 }

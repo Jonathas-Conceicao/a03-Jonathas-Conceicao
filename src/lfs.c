@@ -40,7 +40,7 @@ index_fs_t createFileSystem(char *name, int size, FILE *pFile){
   if (pos < 0) return FAIL;
 
   pFsList->list[pos].vBit       = 1;
-  pFsList->list[pos].open       = 1;
+  pFsList->list[pos].open       = 0;
   strcpy(  pFsList->list[pos].name, name);
   pFsList->list[pos].numBlock   = size;
   pFsList->list[pos].disk       = pFile;
@@ -94,6 +94,7 @@ static int getNextEmptyPositionLFS() {
 }
 
 index_fs_t checkForFileSystemOnLSF(char *name) {
+  if(pFsList == NULL) return FAIL;
   for (int i = 0; i < pFsList->size; ++i) {
     if(strcmp(pFsList->list[i].name, name) == 0)
       return (i+1);
@@ -103,10 +104,10 @@ index_fs_t checkForFileSystemOnLSF(char *name) {
 
 void closeFileSystemOnLSF(index_fs_t index){
   if(pFsList != NULL)
-    pFsList->list[index].vBit = 0;
+    pFsList->list[index].open = 0;
 }
 
 void openFileSystemOnLSF(index_fs_t index){
   if(pFsList != NULL)
-    pFsList->list[index].vBit = 1;
+    pFsList->list[index].open = 1;
 }
