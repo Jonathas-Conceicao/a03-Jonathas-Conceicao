@@ -49,15 +49,14 @@ void vclosefs(indice_fs_t handler){
 
 
 indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
-  version = version; //TODO: Fix versioning when opeing file
   charzao_t *name = charToCharzao(nome);
-  if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 0) {
-    if (acesso == READ || acesso == READ_AND_WRITE) {
-      return FAIL;
-    }
-    if (createFileDescriptorFS(fs, name) == FAIL) return FAIL;
-  }
+  if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 1) return FAIL; // FAIL is file is already open.
   int id = getFileDescriptorIndexFS(fs, name);
+  if (id == FALHA) { // If failed to get file descriptor.
+    if (createFileDescriptorFS(fs, name) == FAIL) return FAIL; // Create a file descriptor
+    id = getFileDescriptorIndexFS(fs, name);
+  }
+  setNumVersionFile(fs, id, version); // Set the opened version.
   return openFileTAA(name, fs, acesso, id);
 }
 

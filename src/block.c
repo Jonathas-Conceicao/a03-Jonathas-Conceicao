@@ -6,8 +6,12 @@
 #include "block.h"
 #include "lfs.h"
 
+#ifndef DEBUGBLOCK
+#define DEBUGBLOCK 0
+#endif
+
 static void addEmptyBlock(indexer_t *pIndexer, index_block_t id);
-static int fileHasIndexerBlock(indexer_t *blockList);
+// static int fileHasIndexerBlock(indexer_t *blockList);
 static uint32_t countFreeBlocksOnIndexerBlock(indexer_t *pIndexer);
 static index_block_t removeEmptyBLock(indexer_t *pIndexer);
 static void printBlock(block_t *, int);
@@ -55,16 +59,15 @@ uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, 
   block_t *blockList = (block_t *) indexer;
   index_block_t *firstIDList = getFirstBlockList(fs, fdId);
   int version = getNumVersionFile(fs, fdId);
-  printf("OLÁ!?\n");
   index_block_t eye = firstIDList[version];
   uint32_t read = 0;
   uint32_t toRead;
   toRead = min(BLOCK_DATA_SIZE, size);
   while (toRead > 0) {
-    printf("Eye at: %i ----\n", eye);
+    // printf("Eye at: %i ----\n", eye);
     if (eye == 0) break; // Finish before reading everthing if next index is out of bound.
-    printBlock(&blockList[eye], 1);
-    strncpy(buffer, &blockList[eye].data, toRead);
+    // printBlock(&blockList[eye], 1);
+    strncpy((buffer + read), (const char *) &blockList[eye].data, toRead);
     read += toRead;
     toRead = min(BLOCK_DATA_SIZE, size - read); // New size to read from block next block.
     eye = blockList[eye].metaData.next[version]; // Gets next pointer.
@@ -85,7 +88,7 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
   index_block_t *firstIDList = getFirstBlockList(fs, fdId);
   int version = getNumVersionFile(fs, fdId);
   // printf("DEBUG VERSION: %i BEFORE\n",getNumVersionFile(fs, fdId));
-  incNumVersionFile(fs, fdId, 0); // BUG: ESSA CARALHA TA BUGANDO MUITO  TODO: Entender o motivo.
+  // incNumVersionFile(fs, fdId, 0); // BUG: ESSA CARALHA TA BUGANDO MUITO  TODO: Entender o motivo.
   // printf("DEBUG VERSION: %i AFTER\n",getNumVersionFile(fs, fdId));
 
   index_block_t lastBlock;
@@ -107,22 +110,17 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
     prevBlock = &blockList[lastBlock].metaData.next[version];
   }
   blockList[lastBlock].metaData.next[version] = 0; // Set the last block as last block of the file.
-  // printf("DEBUGGING Block 1 & 2:\n");
-  // printBlock(&blockList[firstIDList[version]], 1);
+  if (DEBUGBLOCK == 1) printBlock(&blockList[firstIDList[version]], 1);
+  // printf("DEBUGGING Block 1:\n");
   // index_block_t debugAux = blockList[firstIDList[version]].metaData.next[version];
   // printBlock(&blockList[debugAux], 1);
 
-  return SUCCESS;
+  return size;
 }
 
 static void writeOnBlock(block_t *block, int size, char *buffer) {
-  // sprintf(block->data, "%.*s", size, buffer);
   strncpy(block->data, buffer, size);
   return;
-}
-
-static index_block_t *getNextIndexRef(block_t *block, int version) {
-  return &block->metaData.next[version];
 }
 
 int deleteFileContentBlock(index_fs_t fs, index_descriptor_t fdId) {
@@ -155,9 +153,9 @@ static uint32_t countFreeBlocksOnIndexerBlock(indexer_t *pIndexer) {
   return numFreeBlocks;
 }
 
-static int fileHasIndexerBlock(indexer_t *blockList) {
-  return (blockList[0].nextIndexer != 0) ? SUCCESS : FAIL;
-}
+// static int fileHasIndexerBlock(indexer_t *blockList) {
+//   return (blockList[0].nextIndexer != 0) ? SUCCESS : FAIL;
+// }
 
 static index_block_t removeEmptyBLock(indexer_t *pIndexer) {
   block_t *blockList = (block_t *) pIndexer;

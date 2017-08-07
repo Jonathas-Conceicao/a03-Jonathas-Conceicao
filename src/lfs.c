@@ -41,21 +41,19 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
 
 int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
   if(pFsList == NULL) return FAIL;
+  fs -= 1;
 
   file_descriptor_t *desc = (file_descriptor_t *)pFsList->list[fs].blockList;
-
   return desc[fdId].numVersion;
 }
 
-void incNumVersionFile(index_fs_t fs, index_descriptor_t fdId, index_block_t newFirstBlock){
-  if(pFsList == NULL) return;
-
-  // Inc
+void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version){
+  assert(pFsList);
+  fs -= 1;
+  
   file_descriptor_t *desc = (file_descriptor_t *)pFsList->list[fs].blockList;
-  int v = desc[fdId].numVersion++;
-
-  // Set new first block
-  desc[fdId].firstBlock[v] = newFirstBlock;
+  desc[fdId].numVersion = version;
+  return;
 }
 
 indexer_t *getBlockListFS(index_fs_t fs){

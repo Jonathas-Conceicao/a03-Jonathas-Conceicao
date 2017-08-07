@@ -124,14 +124,14 @@ void setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, int val);
 int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId);
 
 /** TODO {DONE}: Bretana Implemente essas funções para lidar com a versão do arquivo.
- * Increments file's version.
+ * Sets file's version.
  *
  * @param  fs                Index of file's FS.
  * @param  fdId              Index of file's File Descriptor.
- * @param  newFirstBlock     File's first block for new version.
+ * @param  version           Version to be set.
  * @return                   SUCCESS or FAIL.
  */
-void incNumVersionFile(index_fs_t fs, index_descriptor_t fdId, index_block_t newFirstBlock);
+void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version);
 
 /**
  * Creates the file system based on it's name and returns it's file handler.
