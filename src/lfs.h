@@ -186,4 +186,52 @@ void syncToDisk(index_fs_t index);
  */
 void checkIndexForFS(index_fs_t handler);
 
+/**
+ * Returns the creation time of the file
+ *
+ * @param   file        the file to get info
+ * @return              the creation time
+ */
+time_t getCreationTime(index_fs_t fs, index_descriptor_t file);
+
+/**
+ * Returns the accessed time of the file
+ *
+ * @param   file        the file to get info
+ * @return              the access time
+ */
+time_t getAccessedTime(index_fs_t fs, index_descriptor_t file);
+
+/**
+ * Returns the modified time of the file
+ *
+ * @param   file        the file to get info
+ * @return              the modification time
+ */
+time_t getModifiedTime(index_fs_t fs, index_descriptor_t file);
+
+/**
+ * Changes the creation fime of the file
+ *
+ * @param   fs          the file system's index of the file
+ * @param   file        the descriptor's idex of the file
+ */
+void touchCreation(index_fs_t fs, index_descriptor_t file);
+
+/**
+ * Changes the access fime of the file
+ *
+ * @param   fs          the file system's index of the file
+ * @param   file        the descriptor's idex of the file
+ */
+void touchAccessed(index_fs_t fs, index_descriptor_t file);
+
+/**
+ * Changes the modification fime of the file
+ *
+ * @param   fs          the file system's index of the file
+ * @param   file        the descriptor's idex of the file
+ */
+void touchModified(index_fs_t fs, index_descriptor_t file);
+
 #endif

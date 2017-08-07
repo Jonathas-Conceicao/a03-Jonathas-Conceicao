@@ -98,19 +98,16 @@ int vseek(indice_arquivo_t arquivo, uint32_t seek){
 }
 
 time_t vcreation(indice_arquivo_t arquivo, int versao){
-  arquivo = arquivo;
   versao = versao;
-  return (time_t)0;
+  return getCreationTime(getFileFSTAA(arquivo), getFileDescriptorIndexTAA(arquivo));
 }
 
 time_t vaccessed(indice_arquivo_t arquivo, int versao){
-  arquivo = arquivo;
   versao = versao;
-  return (time_t)0;
+  return getAccessedTime(getFileFSTAA(arquivo), getFileDescriptorIndexTAA(arquivo));
 }
 
 time_t vlast_modified(indice_arquivo_t arquivo, int versao){
-  arquivo = arquivo;
   versao = versao;
-  return (time_t)0;
+  return getModifiedTime(getFileFSTAA(arquivo), getFileDescriptorIndexTAA(arquivo));
 }
