@@ -46,7 +46,7 @@ void setNextIndexerBlock(indexer_t *blockList, index_block_t src, index_block_t 
 
 /**
  * Writes data from the buffer to the file.
- * @method writeFileContent
+ *
  * @param  fs               File's File System identifier.
  * @param  fdId             File's File Descriptor identifier inside the FS.
  * @param  size             Quantity of bytes to be written.
@@ -54,6 +54,17 @@ void setNextIndexerBlock(indexer_t *blockList, index_block_t src, index_block_t 
  * @return                  SUCCESS or FAIL.
  */
 int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer);
+
+/**
+ * Reads file's content and write's it buffer. Also returns the amount of bytes read.
+ * @method readFileContent
+ * @param  fs              File's File System identifier.
+ * @param  fdId            File's File Descriptor identifier inside the FS.
+ * @param  size            Number of bytes to bee read.
+ * @param  buffer          Buffer to store data read.
+ * @return                 Number of bytes read.
+ */
+uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer);
 
 /**
  * Deletes the content of a file.

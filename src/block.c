@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <string.h>
 #include <stdio.h>
 #include <math.h>
 
@@ -49,6 +50,28 @@ void setNextIndexerBlock(indexer_t *blockList, index_block_t src, index_block_t 
   return;
 }
 
+uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer) {
+  indexer_t *indexer = getBlockListFS(fs);
+  block_t *blockList = (block_t *) indexer;
+  index_block_t *firstIDList = getFirstBlockList(fs, fdId);
+  int version = getNumVersionFile(fs, fdId);
+  printf("OLÁ!?\n");
+  index_block_t eye = firstIDList[version];
+  uint32_t read = 0;
+  uint32_t toRead;
+  toRead = min(BLOCK_DATA_SIZE, size);
+  while (toRead > 0) {
+    printf("Eye at: %i ----\n", eye);
+    if (eye == 0) break; // Finish before reading everthing if next index is out of bound.
+    printBlock(&blockList[eye], 1);
+    strncpy(buffer, &blockList[eye].data, toRead);
+    read += toRead;
+    toRead = min(BLOCK_DATA_SIZE, size - read); // New size to read from block next block.
+    eye = blockList[eye].metaData.next[version]; // Gets next pointer.
+  }
+  return read;
+}
+
 int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer) {
   indexer_t *indexer = getBlockListFS(fs);
   block_t *blockList = (block_t *) indexer;
@@ -61,7 +84,9 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
 
   index_block_t *firstIDList = getFirstBlockList(fs, fdId);
   int version = getNumVersionFile(fs, fdId);
-  int seekByte = getSeekByteFile(fs, fdId);
+  // printf("DEBUG VERSION: %i BEFORE\n",getNumVersionFile(fs, fdId));
+  incNumVersionFile(fs, fdId, 0); // BUG: ESSA CARALHA TA BUGANDO MUITO  TODO: Entender o motivo.
+  // printf("DEBUG VERSION: %i AFTER\n",getNumVersionFile(fs, fdId));
 
   index_block_t lastBlock;
   index_block_t *prevBlock; // Hold the position for the block that will point to the written block.
@@ -86,6 +111,7 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
   // printBlock(&blockList[firstIDList[version]], 1);
   // index_block_t debugAux = blockList[firstIDList[version]].metaData.next[version];
   // printBlock(&blockList[debugAux], 1);
+
   return SUCCESS;
 }
 

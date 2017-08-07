@@ -49,7 +49,7 @@ void vclosefs(indice_fs_t handler){
 
 
 indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
-  version = version;
+  version = version; //TODO: Fix versioning when opeing file
   charzao_t *name = charToCharzao(nome);
   if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 0) {
     if (acesso == READ || acesso == READ_AND_WRITE) {
@@ -66,10 +66,11 @@ int vclose(indice_arquivo_t arquivo) {
 }
 
 uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
-  arquivo = arquivo;
-  tamanho = tamanho;
-  buffer = buffer;
-  return (uint32_t)0;
+  if (isFileOpenTAA(arquivo) == FAIL) return FAIL; // Can't read if file is not opened.
+  if (getFileMode(arquivo) == WRITE) return FAIL; // Can't read if it's write only.
+  index_fs_t fs = getFileFSTAA(arquivo);
+  index_descriptor_t fdId = getFileDescriptorIndexTAA(arquivo);
+  return readFileContent(fs, fdId, tamanho, buffer);
 }
 
 int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer) {

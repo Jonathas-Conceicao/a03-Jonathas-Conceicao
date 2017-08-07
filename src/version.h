@@ -14,7 +14,7 @@
 #define ESCRITA 1
 #define LEITURAESCRITA 2
 
-#define MAXVERSIONS 8 // máximo de versões que um arquivo pode ter 
+#define MAXVERSIONS 8 // máximo de versões que um arquivo pode ter
 #define MAXBLOCKSVERSION 256 // máximo de blocos que uma versão pode mudar
 
 
