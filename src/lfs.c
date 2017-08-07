@@ -215,7 +215,9 @@ void touchCreation(index_fs_t fs, index_descriptor_t file){
   if(pFsList == NULL) return;
 
   file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
-  listDesc[file].creation = clock();
+  if(listDesc != NULL)
+    listDesc[file].creation = clock();
+  touchModified(fs, file);
 }
 
 void touchAccessed(index_fs_t fs, index_descriptor_t file){
@@ -223,7 +225,8 @@ void touchAccessed(index_fs_t fs, index_descriptor_t file){
   if(pFsList == NULL) return;
 
   file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
-  listDesc[file].access = clock();
+  if(listDesc != NULL)
+    listDesc[file].access = clock();
 }
 
 void touchModified(index_fs_t fs, index_descriptor_t file){
@@ -231,5 +234,7 @@ void touchModified(index_fs_t fs, index_descriptor_t file){
   if(pFsList == NULL) return;
 
   file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
-  listDesc[file].modification = clock();
+  if(listDesc != NULL)
+    listDesc[file].modification = clock();
+  touchAccessed(fs, file);
 }
