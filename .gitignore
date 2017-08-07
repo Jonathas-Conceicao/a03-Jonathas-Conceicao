@@ -1,0 +1,9 @@
+*.gch
+*.out
+*.exe
+*.temp
+*.pdf
+*.o
+*.swp
+*.bin
+tags
