@@ -15,6 +15,7 @@ typedef struct file_descriptor_ {
   time_t access;
   index_block_t firstBlock[MAXVERSIONS];
   uint32_t fileSize;
+  int seekByte;
   int numVersion;
 } file_descriptor_t;
 
@@ -94,6 +95,24 @@ index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId);
  * @return                referece to the blocks (first block after the directories).
  */
 indexer_t *getBlockListFS(index_fs_t fs);
+
+/**
+ * Returns file's seek byte inside the block deslocator.
+ *
+ * @param  fs               Index of the file's FS.
+ * @param  fdId             File's descriptor ID.
+ * @return                  File's Seek byte.
+ */
+int getSeekByteFile(index_fs_t fs, index_descriptor_t fdId);
+
+/**
+ * Sets file's seek byte inside the block deslocator.
+ *
+ * @param  fs               Index of the file's FS.
+ * @param  fdId             File's descriptor ID.
+ * @param  val              File's Seek byte.
+ */
+void setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, int val);
 
 /** TODO {DONE}: Bretana Implemente essas funções para lidar com a versão do arquivo.
  * Returns the current number of versions that the file has.

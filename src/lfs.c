@@ -74,6 +74,18 @@ index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId) {
   return (listFD[fdId].firstBlock);
 }
 
+
+int getSeekByteFile(index_fs_t fs, index_descriptor_t fdId) {
+  file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
+  return listFD[fdId].seekByte;
+}
+
+void setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, int val) {
+  file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
+  listFD[fdId].seekByte = val;
+  return;
+}
+
 int getNumBlocksMetaData() {
   // (File Descriptor Size x 256 entrys) / block size + 2 blocks (FAT and At least one data block)
   return ( ( ((sizeof(file_descriptor_t) * MAX_DIR)) / (BLOCK_SIZE) ) + 2 );

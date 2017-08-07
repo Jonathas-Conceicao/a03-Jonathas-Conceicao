@@ -14,8 +14,8 @@ typedef struct block_content_ {
 }block_content_t;
 
 typedef struct block_ {
-  block_content_t metaData;
   char data[BLOCK_SIZE - sizeof(block_content_t)];
+  block_content_t metaData;
 }block_t;
 
 typedef struct indexer_ {
