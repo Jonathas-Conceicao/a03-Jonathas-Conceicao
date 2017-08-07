@@ -186,3 +186,56 @@ void checkIndexForFS(index_fs_t handler){
     assert(0);
   }
 }
+
+time_t getCreationTime(index_fs_t fs, index_descriptor_t file){
+  checkIndexForFS(file);
+  if(pFsList == NULL) return (time_t)0;
+  
+  file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
+  return listDesc[file].creation;
+}
+
+time_t getAccessedTime(index_fs_t fs, index_descriptor_t file){
+  checkIndexForFS(file);
+  if(pFsList == NULL) return (time_t)0;
+  
+  file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
+  return listDesc[file].access;
+}
+
+time_t getModifiedTime(index_fs_t fs, index_descriptor_t file){
+  checkIndexForFS(file);
+  if(pFsList == NULL) return (time_t)0;
+  
+  file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
+  return listDesc[file].modification;
+}
+
+void touchCreation(index_fs_t fs, index_descriptor_t file){
+  checkIndexForFS(file);
+  if(pFsList == NULL) return;
+
+  file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
+  if(listDesc != NULL)
+    listDesc[file].creation = clock();
+  touchModified(fs, file);
+}
+
+void touchAccessed(index_fs_t fs, index_descriptor_t file){
+  checkIndexForFS(file);
+  if(pFsList == NULL) return;
+
+  file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
+  if(listDesc != NULL)
+    listDesc[file].access = clock();
+}
+
+void touchModified(index_fs_t fs, index_descriptor_t file){
+  checkIndexForFS(file);
+  if(pFsList == NULL) return;
+
+  file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
+  if(listDesc != NULL)
+    listDesc[file].modification = clock();
+  touchAccessed(fs, file);
+}

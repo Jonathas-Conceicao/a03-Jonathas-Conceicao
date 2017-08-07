@@ -51,14 +51,29 @@ void vclosefs(indice_fs_t handler){
 indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
   version = version;
   charzao_t *name = charToCharzao(nome);
-  if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 0) {
+  
+  int isOnTAA = isFileOpenTAA(getFileIndexTAA(name, fs));
+
+  if (isOnTAA == 0) {
     if (acesso == READ || acesso == READ_AND_WRITE) {
       return FAIL;
     }
     if (createFileDescriptorFS(fs, name) == FAIL) return FAIL;
   }
   int id = getFileDescriptorIndexFS(fs, name);
-  return openFileTAA(name, fs, acesso, id);
+  indice_arquivo_t pos = openFileTAA(name, fs, acesso, id);
+
+  if(isOnTAA == 0){ //file did not exist
+    touchCreation(fs -1, pos -1);
+  }else{ //file did exist
+    if((acesso == WRITE) || (acesso == READ_AND_WRITE)){
+      touchModified(fs -1, pos -1);
+    }else{
+      touchAccessed(fs -1, pos -1);
+    }
+  }
+
+  return pos;
 }
 
 int vclose(indice_arquivo_t arquivo) {
@@ -66,6 +81,7 @@ int vclose(indice_arquivo_t arquivo) {
 }
 
 uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
+  touchAccessed(getFileDescriptorIndexTAA(arquivo), arquivo); // THERE IS A PROBLEM HERE
   arquivo = arquivo;
   tamanho = tamanho;
   buffer = buffer;
@@ -73,6 +89,7 @@ uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
 }
 
 int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
+  touchModified(getFileDescriptorIndexTAA(arquivo), arquivo);
   if (isFileOpenTAA(arquivo) == FAIL) return FAIL; // Can't write if file is not opened.
   if (getFileMode(arquivo) == READ) return FAIL; // Can't write if it's read only.
   index_fs_t fs = getFileFSTAA(arquivo);
@@ -97,19 +114,16 @@ int vseek(indice_arquivo_t arquivo, uint32_t seek){
 }
 
 time_t vcreation(indice_arquivo_t arquivo, int versao){
-  arquivo = arquivo;
   versao = versao;
-  return (time_t)0;
+  return getCreationTime(getFileFSTAA(arquivo), getFileDescriptorIndexTAA(arquivo));
 }
 
 time_t vaccessed(indice_arquivo_t arquivo, int versao){
-  arquivo = arquivo;
   versao = versao;
-  return (time_t)0;
+  return getAccessedTime(getFileFSTAA(arquivo), getFileDescriptorIndexTAA(arquivo));
 }
 
 time_t vlast_modified(indice_arquivo_t arquivo, int versao){
-  arquivo = arquivo;
   versao = versao;
-  return (time_t)0;
+  return getModifiedTime(getFileFSTAA(arquivo), getFileDescriptorIndexTAA(arquivo));
 }
