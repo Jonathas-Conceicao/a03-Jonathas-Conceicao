@@ -29,12 +29,11 @@ void destryLFS() {
 }
 
 int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
+  fs -= 1;
+  fdId -= 1;
   if((pFsList == NULL) || (fs > pFsList->size)) return FAIL;
 
-  void *list = pFsList->list[fs].blockList;
-  if(list == NULL) return FAIL;
-
-  file_descriptor_t *listFD = (file_descriptor_t *)list;
+  file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
   listFD[fdId].vBit = 0;
   return SUCCESS;
 }
@@ -50,7 +49,7 @@ int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
 void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version){
   assert(pFsList);
   fs -= 1;
-  
+
   file_descriptor_t *desc = (file_descriptor_t *)pFsList->list[fs].blockList;
   desc[fdId].numVersion = version;
   return;
@@ -200,7 +199,7 @@ void checkIndexForFS(index_fs_t handler){
 time_t getCreationTime(index_fs_t fs, index_descriptor_t file){
   checkIndexForFS(file);
   if(pFsList == NULL) return (time_t)0;
-  
+
   file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
   return listDesc[file].creation;
 }
@@ -208,7 +207,7 @@ time_t getCreationTime(index_fs_t fs, index_descriptor_t file){
 time_t getAccessedTime(index_fs_t fs, index_descriptor_t file){
   checkIndexForFS(file);
   if(pFsList == NULL) return (time_t)0;
-  
+
   file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
   return listDesc[file].access;
 }
@@ -216,7 +215,7 @@ time_t getAccessedTime(index_fs_t fs, index_descriptor_t file){
 time_t getModifiedTime(index_fs_t fs, index_descriptor_t file){
   checkIndexForFS(file);
   if(pFsList == NULL) return (time_t)0;
-  
+
   file_descriptor_t *listDesc = (file_descriptor_t *)pFsList->list[fs].blockList;
   return listDesc[file].modification;
 }

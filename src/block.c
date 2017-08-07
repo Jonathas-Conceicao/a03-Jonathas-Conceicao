@@ -81,15 +81,10 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
 
   uint32_t numBlocks = ceil ((float) size / (float) BLOCK_DATA_SIZE); // Count and round up the number of blocks needed.
   uint32_t freeBlocks = countFreeBlocksOnIndexerBlock(indexer);
-  // printf("DEBUG: Num of free blocks: %i\n", freeBlocks);
-  // printf("DEBUG: Numb Blocks Needed: %i\n",  numBlocks);
   if (numBlocks > freeBlocks) return FAIL; // Can't write on this FAT when it's full.
 
   index_block_t *firstIDList = getFirstBlockList(fs, fdId);
   int version = getNumVersionFile(fs, fdId);
-  // printf("DEBUG VERSION: %i BEFORE\n",getNumVersionFile(fs, fdId));
-  // incNumVersionFile(fs, fdId, 0); // BUG: ESSA CARALHA TA BUGANDO MUITO  TODO: Entender o motivo.
-  // printf("DEBUG VERSION: %i AFTER\n",getNumVersionFile(fs, fdId));
 
   index_block_t lastBlock;
   index_block_t *prevBlock; // Hold the position for the block that will point to the written block.
