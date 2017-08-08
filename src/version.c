@@ -53,10 +53,10 @@ indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
   if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 1) return FAIL; // FAIL is file is already open.
   int id = getFileDescriptorIndexFS(fs, name);
   if (id == FALHA) { // If failed to get file descriptor then file doesn't exists yet.
-    if (acesso == WRITE) { // If access is WRITE only we can create the file.
+    if (acesso != LEITURA) { // If access is WRITE or WRITE_AND_READ we can create the file.
       if (createFileDescriptorFS(fs, name) == FAIL) return FAIL; // Create a file descriptor.
       id = getFileDescriptorIndexFS(fs, name);
-    } else { // If file is for READ or READ_AND_WRITE.
+    } else { // If file READ only.
       return FAIL; // FAIL because file still doesn't exists.
     }
   }
@@ -97,9 +97,9 @@ int vdelete(indice_arquivo_t arquivo) {
 
 //TODO: Nada implementado ainda. O teste do Pila não faz sentido. Open para leitura e escrita deve criar o arquivo?
 int vseek(indice_arquivo_t arquivo, uint32_t seek){
-  arquivo = arquivo;
-  seek = seek;
-  return 0;
+  index_fs_t fs = getFileFSTAA(arquivo);
+  index_descriptor_t fdId = getFileDescriptorIndexTAA(arquivo);
+  return setSeekByteFile(fs, fdId, seek);
 }
 
 time_t vcreation(indice_arquivo_t arquivo, int versao){

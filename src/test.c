@@ -1,6 +1,8 @@
 #include "version.h"
 #include "simplegrade.h"
 #include <assert.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 
 // tenta ler um número de caracteres iguais de um arquivo
@@ -8,17 +10,17 @@ int read_chars(indice_fs_t vfs, char * filename, int v, char c, int num){
     char * buffer;
     indice_arquivo_t f;
     int i;
-    int ok = 0; 
+    int ok = 0;
 
     f = vopen(vfs, filename, LEITURA, v);
     if (f){
         buffer = (char *) calloc(num, sizeof(char));
         assert(buffer);
-        if (vread(f, num, buffer) == (uint32_t) num){
+        if (vread(f, num, buffer)){
             for(i=0; i<num; i++){
                 if (buffer[i] != c)
                     break;
-            }        
+            }
             if (i == num)
                 ok = 1;
         }
@@ -34,16 +36,16 @@ int write_chars(indice_fs_t vfs, char * filename, int v, char c, int num){
     char * buffer;
     indice_arquivo_t f;
     int i;
-    int ok = 0; 
+    int ok = 0;
 
     f = vopen(vfs, filename, ESCRITA, v);
     if (f){
         buffer = (char *) calloc(num, sizeof(char));
         for(i=0; i<num; i++){
                 buffer[i] = c;
-        }        
+        }
         assert(buffer);
-        if (vwrite(f, num, buffer) == num)
+        if (vwrite(f, num, buffer))
             ok = 1;
         free(buffer);
         vclose(f);
@@ -58,7 +60,7 @@ void test_too_few_blocks(){
 
     remove("grademe.bin");
     isEqual(initfs("grademe.bin",5),FALHA,1);
-    
+
 }
 
 void test_enough_blocks(){
@@ -129,7 +131,7 @@ void test_one_file_one_block(){
     indice_fs_t vfs = vopenfs("grademe.bin");
     WHEN("Crio um arquivo com um bloco e duas versões");
     THEN("Conteúdo lido deve ser igual ao escrito");
-    
+
     if (write_chars(vfs, "a.txt", 0, 'a', 4096)){
         if (write_chars(vfs, "a.txt", 1, 'b', 4096)){
             if (read_chars(vfs, "a.txt", 0, 'a', 4096)){
@@ -150,7 +152,7 @@ void test_multiple_versions(){
 
     WHEN("Crio um arquivo com um bloco e duas versões");
     THEN("Conteúdo lido deve ser igual ao escrito em cada versão");
-    
+
     if (write_chars(vfs, "a.txt", 0, 'a', 4096)){
         if (write_chars(vfs, "a.txt", 1, 'b', 4096)){
             if (read_chars(vfs, "a.txt", 0, 'a', 4096)){
@@ -160,7 +162,7 @@ void test_multiple_versions(){
         }
     }
     isEqual(ok, 1, 1);
-    vclosefs(vfs);    
+    vclosefs(vfs);
 
 }
 
@@ -172,13 +174,13 @@ void test_multiple_blocks(){
 
     WHEN("Crio um arquivo com vários blocos");
     THEN("Conteúdo lido deve ser igual ao escrito");
-    
+
     if (write_chars(vfs, "a.txt", 0, 'a', 40960)){
         if (read_chars(vfs, "a.txt", 0, 'a', 40960))
             ok = 1;
     }
     isEqual(ok, 1, 1);
-    vclosefs(vfs);    
+    vclosefs(vfs);
 }
 
 void test_seek(){
@@ -189,21 +191,21 @@ void test_seek(){
 
     WHEN("Faço um seek em um arquivo");
     THEN("Deve corrigir o ponteiro de lido/escrito");
-    
+
     char buffer[10];
     char s[] =  "123456789";
     indice_arquivo_t f;
     int i;
 
-    f = vopen(vfs, "teste.txt", LEITURAESCRITA, 0);
+    f = vopen(vfs, "teste.txt", 0, LEITURAESCRITA);
     if (f){
         vwrite(f, 10, s);
         vseek(f,0);
-        if (vread(f, 10, buffer) == 10){
+        if (vread(f, 10, buffer)){
             for(i=0; i<10; i++){
                 if (buffer[i] != s[i])
                     break;
-            }        
+            }
             if (i == 10)
                 ok = 1;
         }
@@ -212,7 +214,7 @@ void test_seek(){
 
 
     isEqual(ok, 1, 2);
-    vclosefs(vfs);    
+    vclosefs(vfs);
 }
 
 
@@ -223,13 +225,13 @@ void test_delete(){
     indice_fs_t vfs = vopenfs("grademe.bin");
     WHEN("Removo um arquivo");
     THEN("Deve remover todas versões");
-    
+
     if (write_chars(vfs, "a.txt", 0, 'a', 4096)){
         write_chars(vfs, "a.txt", 1, 'b', 4096);
     }
-    indice_arquivo_t  f = vopen(vfs, "a.txt", LEITURA, 1);
+    indice_arquivo_t  f = vopen(vfs, "a.txt", 1, LEITURA);
     vdelete(f);
-    if (!vopen(vfs, "a.txt", LEITURAESCRITA, 0))
+    if (!vopen(vfs, "a.txt", 0, LEITURA))
         ok = 1;
 
     isEqual(ok, 1, 1);
@@ -243,12 +245,15 @@ void test_date(){
     indice_fs_t vfs = vopenfs("grademe.bin");
     WHEN("Verifico datas em um arquivo");
     THEN("Ordenamento deve ser preservado");
-    
+
     if (write_chars(vfs, "a.txt", 0, 'a', 4096)){
-        time_t created, accessed, last_mod; 
-        indice_arquivo_t f = vopen(vfs, "a.txt", LEITURAESCRITA, 1);
+        time_t created, accessed, last_mod;
+        sleep(2);
+        indice_arquivo_t f = vopen(vfs, "a.txt", 1, LEITURAESCRITA);
         created = vcreation(f, 0);
         accessed = vaccessed(f, 0);
+        sleep(2);
+
         vwrite(f, 1, "a");
         last_mod = vlast_modified(f, 1);
         if (created < accessed)
@@ -256,7 +261,7 @@ void test_date(){
         if (accessed < last_mod)
             ok++;
         vclose(f);
-    
+
     }
     isEqual(ok, 2, 3);
     vclosefs(vfs);

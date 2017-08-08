@@ -111,8 +111,9 @@ int getSeekByteFile(index_fs_t fs, index_descriptor_t fdId);
  * @param  fs               Index of the file's FS.
  * @param  fdId             File's descriptor ID.
  * @param  val              File's Seek byte.
+ * @return                  SUCCESS or FAIL.
  */
-void setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, int val);
+int setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, uint32_t val);
 
 /** TODO {DONE}: Bretana Implemente essas funções para lidar com a versão do arquivo.
  * Returns the current number of versions that the file has.

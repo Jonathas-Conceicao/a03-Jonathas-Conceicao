@@ -77,10 +77,13 @@ int getSeekByteFile(index_fs_t fs, index_descriptor_t fdId) {
   return listFD[fdId].seekByte;
 }
 
-void setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, int val) {
+int setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, uint32_t val) {
   file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
-  listFD[fdId].seekByte = val;
-  return;
+  if (val >= listFD[fdId].fileSize) {
+    listFD[fdId].seekByte = val;
+    return SUCCESS;
+  }
+  return FAIL;
 }
 
 int getNumBlocksMetaData() {
@@ -183,6 +186,7 @@ void syncToDisk(index_fs_t index){
   if((pFsList == NULL) || (pFsList->list[index].blockList == NULL)) return;
 
   size_t result = fwrite(pFsList->list[index].blockList, BLOCK_SIZE, pFsList->list[index].numBlock, pFsList->list[index].disk);
+  // printf("DEBUG: Writing to %s\n",pFsList->list[index].name); BUG: Aparentemente todos os fclosevs estão escrevendo no mesmo arquivo TODO: Bretana, arruma isso.
   if(result != (unsigned)pFsList->list[index].numBlock){
     fprintf(stderr, "\nThere was some problem writen on the file Expected write %lu, but wrote %lu.\n", result, (size_t)pFsList->list[index].numBlock);
     assert(0);

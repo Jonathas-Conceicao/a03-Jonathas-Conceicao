@@ -15,9 +15,6 @@ static void addEmptyBlock(indexer_t *pIndexer, index_block_t id);
 static uint32_t countFreeBlocksOnIndexerBlock(indexer_t *pIndexer);
 static index_block_t removeEmptyBLock(indexer_t *pIndexer);
 static void printBlock(block_t *, int);
-static int max(int a, int b);
-static int min(int a, int b);
-static void writeOnBlock(block_t *block, int size, char *buffer);
 
 static int min(int a, int b) {
   return (a >= b) ? b : a;
@@ -88,7 +85,8 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
 
   index_block_t lastBlock;
   index_block_t *prevBlock; // Hold the position for the block that will point to the written block.
-
+  int seekByte = getSeekByteFile(fs, fdId);
+  (void)seekByte; //TODO: Usar o seek
   prevBlock = &firstIDList[version];
   while (*prevBlock != 0) { // Goes to the last block.
     prevBlock = &blockList[*prevBlock].metaData.next[version];
@@ -100,22 +98,14 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
     toWrite = min(BLOCK_DATA_SIZE, size - written);
     lastBlock = removeEmptyBLock(indexer); // Gets an empty block.
     *prevBlock = lastBlock;
-    writeOnBlock(&blockList[lastBlock], toWrite, (buffer + written));
+    strncpy(blockList[lastBlock].data, (buffer + written), toWrite);
     written += toWrite;
     prevBlock = &blockList[lastBlock].metaData.next[version];
   }
   blockList[lastBlock].metaData.next[version] = 0; // Set the last block as last block of the file.
   if (DEBUGBLOCK == 1) printBlock(&blockList[firstIDList[version]], 1);
-  // printf("DEBUGGING Block 1:\n");
-  // index_block_t debugAux = blockList[firstIDList[version]].metaData.next[version];
-  // printBlock(&blockList[debugAux], 1);
 
   return size;
-}
-
-static void writeOnBlock(block_t *block, int size, char *buffer) {
-  strncpy(block->data, buffer, size);
-  return;
 }
 
 int deleteFileContentBlock(index_fs_t fs, index_descriptor_t fdId) {

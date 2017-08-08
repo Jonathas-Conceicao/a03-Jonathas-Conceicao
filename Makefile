@@ -3,7 +3,7 @@ SHELL=/bin/bash
 TARGET = a03-conferidor-de-magias
 
 CC = gcc
-CFLAG = -std=c11 -Wall -Wextra #-Werror -g
+CFLAG = -std=c11 -Wall -Wextra -Werror #-g
 
 # Folders
 OBJ = obj
