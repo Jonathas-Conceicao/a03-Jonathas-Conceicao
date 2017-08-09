@@ -34,12 +34,6 @@ indice_fs_t vopenfs(char * arquivo) {
   return pos +1;
 }
 
-// TODO
-// This function should
-// 1) Close all files on that file system
-// 2) Write the information about this FS on disk (its binary file)
-// 3) Free this FS allocated memory
-// 4) Mark this FS as closed
 void vclosefs(indice_fs_t handler){
   checkIndexForFS(handler);
   closeAllFilesFromFSTAA(handler);
@@ -50,7 +44,9 @@ void vclosefs(indice_fs_t handler){
 
 indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
   charzao_t *name = charToCharzao(nome);
-  if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 1) return FAIL; // FAIL is file is already open.
+  int isOnTAA = isFileOpenTAA(getFileIndexTAA(name, fs));
+  //if (isFileOpenTAA(getFileIndexTAA(name, fs)) == 1) return FAIL; // FAIL is file is already open.
+  if (isOnTAA == 1) return FAIL; // FAIL is file is already open.
   int id = getFileDescriptorIndexFS(fs, name);
   if (id == FALHA) { // If failed to get file descriptor then file doesn't exists yet.
     if (acesso != LEITURA) { // If access is WRITE or WRITE_AND_READ we can create the file.
@@ -60,8 +56,20 @@ indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
       return FAIL; // FAIL because file still doesn't exists.
     }
   }
+
   setNumVersionFile(fs, id, version); // Set the opened version.
-  return openFileTAA(name, fs, acesso, id);
+  index_file_t pos =  openFileTAA(name, fs, acesso, id);
+  if(isOnTAA == 0){ // file did not exist
+    touchCreation(fs -1, pos -1);
+  }else{ //file did exist
+    if((acesso == WRITE) || (acesso == READ_AND_WRITE)){
+      touchModified(fs -1, pos -1);
+    }else{
+      touchAccessed(fs -1, pos -1);
+    }
+  }
+
+  return pos;
 }
 
 int vclose(indice_arquivo_t arquivo) {
@@ -69,6 +77,7 @@ int vclose(indice_arquivo_t arquivo) {
 }
 
 uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
+  touchAccessed(getFileDescriptorIndexTAA(arquivo), arquivo);
   if (isFileOpenTAA(arquivo) == FAIL) return FAIL; // Can't read if file is not opened.
   if (getFileMode(arquivo) == WRITE) return FAIL; // Can't read if it's write only.
   index_fs_t fs = getFileFSTAA(arquivo);
@@ -77,6 +86,7 @@ uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
 }
 
 int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer) {
+  touchModified(getFileDescriptorIndexTAA(arquivo), arquivo);
   if (isFileOpenTAA(arquivo) == FAIL) return FAIL; // Can't write if file is not opened.
   if (getFileMode(arquivo) == READ) return FAIL; // Can't write if it's read only.
   index_fs_t fs = getFileFSTAA(arquivo);
