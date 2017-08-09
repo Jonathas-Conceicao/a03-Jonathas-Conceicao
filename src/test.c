@@ -197,7 +197,7 @@ void test_seek(){
     indice_arquivo_t f;
     int i;
 
-    f = vopen(vfs, "teste.txt", 0, LEITURAESCRITA);
+    f = vopen(vfs, "teste.txt", LEITURAESCRITA, 0);
     if (f){
         vwrite(f, 10, s);
         vseek(f,0);
@@ -229,7 +229,7 @@ void test_delete(){
     if (write_chars(vfs, "a.txt", 0, 'a', 4096)){
         write_chars(vfs, "a.txt", 1, 'b', 4096);
     }
-    indice_arquivo_t  f = vopen(vfs, "a.txt", 1, LEITURA);
+    indice_arquivo_t  f = vopen(vfs, "a.txt", LEITURA, 1);
     vdelete(f);
     if (!vopen(vfs, "a.txt", 0, LEITURA))
         ok = 1;
@@ -249,7 +249,7 @@ void test_date(){
     if (write_chars(vfs, "a.txt", 0, 'a', 4096)){
         time_t created, accessed, last_mod;
         sleep(2);
-        indice_arquivo_t f = vopen(vfs, "a.txt", 1, LEITURAESCRITA);
+        indice_arquivo_t f = vopen(vfs, "a.txt", LEITURAESCRITA, 1);
         created = vcreation(f, 0);
         accessed = vaccessed(f, 0);
         sleep(2);
