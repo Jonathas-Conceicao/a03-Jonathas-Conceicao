@@ -13,7 +13,7 @@
 static void addEmptyBlock(indexer_t *pIndexer, index_block_t id);
 // static int fileHasIndexerBlock(indexer_t *blockList);
 static uint32_t countFreeBlocksOnIndexerBlock(indexer_t *pIndexer);
-static index_block_t removeEmptyBLock(indexer_t *pIndexer);
+static index_block_t removeEmptyBlock(indexer_t *pIndexer);
 static void printBlock(block_t *, int);
 
 static int min(int a, int b) {
@@ -30,7 +30,14 @@ static void printBlock(block_t *b, int printContent) {
   for (unsigned i = 0; i < MAXVERSIONS; ++i) {
     fprintf(stderr, "%i: %i\n", i+1, b->metaData.next[i]);
   }
-  if (printContent) fprintf(stderr, "Block's content:\n------\n%s\n------\n", b->data);
+  if (printContent) {
+    fprintf(stderr, "Block's content:\n------\n");
+    for (long unsigned i = 0; i < BLOCK_DATA_SIZE; ++i) {
+      if (!b->data[i]) fprintf(stderr, "-");
+      else fprintf(stderr, "%c",b->data[i]);
+    }
+    fprintf(stderr, "\n------\n");
+  }
   return;
 }
 
@@ -59,12 +66,20 @@ uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, 
   index_block_t eye = firstIDList[version];
   uint32_t read = 0;
   uint32_t toRead;
+
+  int seekByte = getSeekByteFile(fs, fdId); // Offset insde the block.
+  int seekBlock = seekByte / BLOCK_DATA_SIZE; // Blocks of Offset.
+  seekByte = seekByte % BLOCK_DATA_SIZE; // Offset inside the block.
+
+  for (int i = 0; i < seekBlock; ++i) { // Walk the seekBlock offset in blocks
+    eye = blockList[eye].metaData.next[version];
+  }
+
   toRead = min(BLOCK_DATA_SIZE, size);
   while (toRead > 0) {
-    // printf("Eye at: %i ----\n", eye);
     if (eye == 0) break; // Finish before reading everthing if next index is out of bound.
-    // printBlock(&blockList[eye], 1);
-    strncpy((buffer + read), (const char *) &blockList[eye].data, toRead);
+    strncpy((buffer + read), (const char *) (blockList[eye].data + seekByte), toRead);
+    seekByte = 0; // Set the byte offset after it's used once.
     read += toRead;
     toRead = min(BLOCK_DATA_SIZE, size - read); // New size to read from block next block.
     eye = blockList[eye].metaData.next[version]; // Gets next pointer.
@@ -72,7 +87,7 @@ uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, 
   return read;
 }
 
-int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer) {
+uint32_t writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer) {
   indexer_t *indexer = getBlockListFS(fs);
   block_t *blockList = (block_t *) indexer;
 
@@ -83,29 +98,48 @@ int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char
   index_block_t *firstIDList = getFirstBlockList(fs, fdId);
   int version = getNumVersionFile(fs, fdId);
 
-  index_block_t lastBlock;
+  index_block_t writingBlock;
   index_block_t *prevBlock; // Hold the position for the block that will point to the written block.
   int seekByte = getSeekByteFile(fs, fdId);
-  (void)seekByte; //TODO: Usar o seek
+  int seekBlock = seekByte / BLOCK_DATA_SIZE; // Blocks of Offset.
+  seekByte = seekByte % BLOCK_DATA_SIZE; // Offset inside the block.
+  uint32_t fSize = getSizeFile(fs, fdId); // New size to be returned.
+
   prevBlock = &firstIDList[version];
-  while (*prevBlock != 0) { // Goes to the last block.
-    prevBlock = &blockList[*prevBlock].metaData.next[version];
+  if (seekBlock > 0) { // If we have a seek in block we won't write at the end of the file.
+    for (int i = 0; i < seekBlock; ++i) {
+      writingBlock = *prevBlock;
+      prevBlock = &blockList[*prevBlock].metaData.next[version];
+    }
+  } else { // Else we go to the last block.
+    while (*prevBlock != 0) {
+      writingBlock = *prevBlock;
+      prevBlock = &blockList[*prevBlock].metaData.next[version];
+    }
   }
 
   int written = 0;
   int toWrite;
   for (unsigned i = 0; i < numBlocks; ++i) {
-    toWrite = min(BLOCK_DATA_SIZE, size - written);
-    lastBlock = removeEmptyBLock(indexer); // Gets an empty block.
-    *prevBlock = lastBlock;
-    strncpy(blockList[lastBlock].data, (buffer + written), toWrite);
+    toWrite = min(BLOCK_DATA_SIZE - seekByte, size - written);
+    if (!seekByte) { // If seekByte is zero we get a newBlock.
+      writingBlock = removeEmptyBlock(indexer); // Gets an empty block.
+    }
+    *prevBlock = writingBlock;
+    assert(writingBlock != 0 && "Can't write on block 0");
+    strncpy((blockList[writingBlock].data + seekByte), (buffer + written), toWrite);
+    if (seekByte) { // If I had a seekByte I can set it to zero after the first write. Because it's only used once.
+      seekByte = 0;
+    } else { // If I did not had a seekByte then I've written a new block and now we need to link it.
+      prevBlock = &blockList[writingBlock].metaData.next[version];
+    }
+    seekByte = 0; // Only uses the seekByte for the first write.
     written += toWrite;
-    prevBlock = &blockList[lastBlock].metaData.next[version];
   }
-  blockList[lastBlock].metaData.next[version] = 0; // Set the last block as last block of the file.
+  blockList[writingBlock].metaData.next[version] = 0; // Set the last block as last block of the file.
   if (DEBUGBLOCK == 1) printBlock(&blockList[firstIDList[version]], 1);
 
-  return size;
+  return fSize + size;
 }
 
 int deleteFileContentBlock(index_fs_t fs, index_descriptor_t fdId) {
@@ -142,7 +176,7 @@ static uint32_t countFreeBlocksOnIndexerBlock(indexer_t *pIndexer) {
 //   return (blockList[0].nextIndexer != 0) ? SUCCESS : FAIL;
 // }
 
-static index_block_t removeEmptyBLock(indexer_t *pIndexer) {
+static index_block_t removeEmptyBlock(indexer_t *pIndexer) {
   block_t *blockList = (block_t *) pIndexer;
   index_block_t auxIndex = pIndexer[0].emptyBlock; // Index of first free block.
   block_t *auxBlock = &blockList[auxIndex]; // Reference to first block.

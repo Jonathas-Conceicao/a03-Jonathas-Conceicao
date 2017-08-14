@@ -51,9 +51,9 @@ void setNextIndexerBlock(indexer_t *blockList, index_block_t src, index_block_t 
  * @param  fdId             File's File Descriptor identifier inside the FS.
  * @param  size             Quantity of bytes to be written.
  * @param  buffer           Reference to the first bit to write.
- * @return                  SUCCESS or FAIL.
+ * @return                  FAIL or file's new size.
  */
-int writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer);
+uint32_t writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer);
 
 /**
  * Reads file's content and write's it buffer. Also returns the amount of bytes read.

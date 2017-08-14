@@ -40,7 +40,8 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
 
 int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
   if(pFsList == NULL) return FAIL;
-  fs -= 1;
+  fs -=1;
+  fdId -=1;
 
   file_descriptor_t *desc = (file_descriptor_t *)pFsList->list[fs].blockList;
   return desc[fdId].numVersion;
@@ -48,7 +49,8 @@ int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
 
 void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version){
   assert(pFsList);
-  fs -= 1;
+  fs -=1;
+  fdId -=1;
 
   file_descriptor_t *desc = (file_descriptor_t *)pFsList->list[fs].blockList;
   desc[fdId].numVersion = version;
@@ -66,24 +68,44 @@ indexer_t *getBlockListFS(index_fs_t fs){
 
 index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId) {
   assert(pFsList);
-  // fs -= 1;
+  fs -=1;
+  fdId -=1;
   file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
   return (listFD[fdId].firstBlock);
 }
 
 
 int getSeekByteFile(index_fs_t fs, index_descriptor_t fdId) {
+  fs -=1;
+  fdId -=1;
   file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
   return listFD[fdId].seekByte;
 }
 
 int setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, uint32_t val) {
+  fs -=1;
+  fdId -=1;
   file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
-  if (val >= listFD[fdId].fileSize) {
+  if (val <= listFD[fdId].fileSize) {
     listFD[fdId].seekByte = val;
     return SUCCESS;
   }
   return FAIL;
+}
+
+int getSizeFile(index_fs_t fs, index_descriptor_t fdId) {
+  fs -= 1;
+  fdId -= 1;
+  file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
+  return listFD[fdId].fileSize;
+}
+
+int setSizeFile(index_fs_t fs, index_descriptor_t fdId, uint32_t newSize) {
+  fs -= 1;
+  fdId -= 1;
+  file_descriptor_t *listFD = (file_descriptor_t *)pFsList->list[fs].blockList;
+  listFD[fdId].fileSize = newSize;
+  return SUCCESS;
 }
 
 int getNumBlocksMetaData() {
