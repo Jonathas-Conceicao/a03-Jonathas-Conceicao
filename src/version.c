@@ -91,7 +91,8 @@ int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer) {
   if (getFileMode(arquivo) == READ) return FAIL; // Can't write if it's read only.
   index_fs_t fs = getFileFSTAA(arquivo);
   index_descriptor_t fdId = getFileDescriptorIndexTAA(arquivo);
-  return writeFileContent(fs, fdId, tamanho, buffer);
+  uint32_t newSize = writeFileContent(fs, fdId, tamanho, buffer);
+  return setSizeFile(fs, fdId, newSize);
 }
 
 int vdelete(indice_arquivo_t arquivo) {
@@ -105,7 +106,6 @@ int vdelete(indice_arquivo_t arquivo) {
   return SUCCESS;
 }
 
-//TODO: Nada implementado ainda. O teste do Pila não faz sentido. Open para leitura e escrita deve criar o arquivo?
 int vseek(indice_arquivo_t arquivo, uint32_t seek){
   index_fs_t fs = getFileFSTAA(arquivo);
   index_descriptor_t fdId = getFileDescriptorIndexTAA(arquivo);

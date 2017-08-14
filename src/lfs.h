@@ -135,6 +135,25 @@ int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId);
 void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version);
 
 /**
+ * Get file's size.
+ *
+ * @param  fs          Index of file's FS.
+ * @param  fdId        Index of file's File Descriptor.
+ * @return             File's size.
+ */
+int getSizeFile(index_fs_t fs, index_descriptor_t fdId);
+
+/**
+* Sets file's size.
+*
+* @param  fs          Index of file's FS.
+* @param  fdId        Index of file's File Descriptor.
+* @param  newSize     File's new size to be set.
+* @return             SUCESS or FAIL.
+*/
+int setSizeFile(index_fs_t fs, index_descriptor_t fdId, uint32_t newSize);
+
+/**
  * Creates the file system based on it's name and returns it's file handler.
  *
  * @param  name           File Systems's name.
