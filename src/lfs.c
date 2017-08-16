@@ -247,6 +247,7 @@ time_t getModifiedTime(index_fs_t fs, index_descriptor_t file){
 }
 
 void touchCreation(index_fs_t fs, index_descriptor_t file){
+  if(fs == -1) return;
   checkIndexForFS(file);
   if(pFsList == NULL) return;
 
@@ -257,6 +258,7 @@ void touchCreation(index_fs_t fs, index_descriptor_t file){
 }
 
 void touchAccessed(index_fs_t fs, index_descriptor_t file){
+  if(fs == -1) return;
   checkIndexForFS(file);
   if(pFsList == NULL) return;
 
@@ -266,6 +268,7 @@ void touchAccessed(index_fs_t fs, index_descriptor_t file){
 }
 
 void touchModified(index_fs_t fs, index_descriptor_t file){
+  if(fs == -1) return;
   checkIndexForFS(file);
   if(pFsList == NULL) return;
 
