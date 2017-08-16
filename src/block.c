@@ -58,11 +58,11 @@ void setNextIndexerBlock(indexer_t *blockList, index_block_t src, index_block_t 
   return;
 }
 
-uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer) {
+uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer, int version) {
   indexer_t *indexer = getBlockListFS(fs);
   block_t *blockList = (block_t *) indexer;
   index_block_t *firstIDList = getFirstBlockList(fs, fdId);
-  int version = getNumVersionFile(fs, fdId);
+  // int version = getNumVersionFile(fs, fdId);
   index_block_t eye = firstIDList[version];
   uint32_t read = 0;
   uint32_t toRead;
@@ -87,7 +87,7 @@ uint32_t readFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, 
   return read;
 }
 
-uint32_t writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer) {
+uint32_t writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size, char *buffer, int version) {
   indexer_t *indexer = getBlockListFS(fs);
   block_t *blockList = (block_t *) indexer;
 
@@ -96,7 +96,7 @@ uint32_t writeFileContent(index_fs_t fs, index_descriptor_t fdId, uint32_t size,
   if (numBlocks > freeBlocks) return FAIL; // Can't write on this FAT when it's full.
 
   index_block_t *firstIDList = getFirstBlockList(fs, fdId);
-  int version = getNumVersionFile(fs, fdId);
+  // int version = getNumVersionFile(fs, fdId);
 
   index_block_t writingBlock;
   index_block_t *prevBlock; // Hold the position for the block that will point to the written block.

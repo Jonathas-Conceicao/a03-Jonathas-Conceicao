@@ -38,7 +38,7 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
   return SUCCESS;
 }
 
-int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
+int getNumVersionFileDescriptor(index_fs_t fs, index_descriptor_t fdId){
   if(pFsList == NULL) return FAIL;
   fs -=1;
   fdId -=1;
@@ -47,7 +47,7 @@ int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
   return desc[fdId].numVersion;
 }
 
-void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version){
+void setNumVersionFileDescriptor(index_fs_t fs, index_descriptor_t fdId, int version){
   assert(pFsList);
   fs -=1;
   fdId -=1;
