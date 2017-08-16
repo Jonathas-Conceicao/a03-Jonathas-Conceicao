@@ -33,14 +33,25 @@ debug:
 
 rebuild-debug: clean debug rebuild
 
-#@echo -e "$(WARNIGN)Here we compile the test[?]$(NC)";
 build: version.o useful.o taa.o lfs.o block.o test.o
+	@echo -e "$(NOTE)Compiling all together$(NC)";
+	$(CC) $(CFLAG) $(OBJ)/*.o	-o $(BIN)/$(TARGET).out -lm
+
+build-teste: clean version.o useful.o taa.o lfs.o block.o teste.o
 	@echo -e "$(NOTE)Compiling all together$(NC)";
 	$(CC) $(CFLAG) $(OBJ)/*.o	-o $(BIN)/$(TARGET).out -lm
 
 run: build
 	@echo -e "$(NOTE)Grading$(NC)";
 	./$(BIN)/$(TARGET).out
+
+run-teste: build-teste
+	@echo -e "$(NOTE)Testing$(NC)";
+	./$(BIN)/$(TARGET).out
+
+teste.o: $(SRC)/teste.c version.o
+	@echo -e "$(NOTE)Compiling test.c$(NC)";
+	$(CC) $(CFLAG) -c $(SRC)/teste.c -o $(OBJ)/test.o -lm
 
 test.o: $(SRC)/test.c version.o
 	@echo -e "$(NOTE)Compiling test.c$(NC)";
