@@ -16,6 +16,7 @@ typedef struct file_ {
   charzao_t name[255];
   index_fs_t fsIndex;
   int mode;
+  int version;
   index_descriptor_t descriptorIndex;
 }file_t;
 
@@ -45,10 +46,11 @@ void destryTAA();
  * @param  name              File's name.
  * @param  fsIndex           Index of files's FS.
  * @param  mode              READ, WRITE or READ_AND_WRITE
+ * @param  version           File's version to be opened;
  * @param  descriptorIndex   Index of file's descriptor in the directory.
  * @return                   File's index, or -1 if failed.
  */
-index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, index_descriptor_t descriptorIndex);
+index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, int version, index_descriptor_t descriptorIndex);
 
 /**
  * Checks if a file is already opened on TAA.
@@ -95,6 +97,14 @@ index_fs_t getFileFSTAA(index_file_t id);
  * @return             file's mode, -1 if position is invalid.
  */
 int getFileMode(index_file_t id);
+
+/**
+ * Returns the current opened version of a file.
+ *
+ * @param  fs                File's index in the TAA.
+ * @return                   Number of versions.
+ */
+int getNumVersionFile(index_file_t id);
 
 /**
  * Finds file's descriptor's index.

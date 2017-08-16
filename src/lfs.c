@@ -38,7 +38,7 @@ int deleteFileDescriptorFS(index_fs_t fs, index_descriptor_t fdId){
   return SUCCESS;
 }
 
-int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
+int getNumVersionFileDescriptor(index_fs_t fs, index_descriptor_t fdId){
   if(pFsList == NULL) return FAIL;
   fs -=1;
   fdId -=1;
@@ -47,7 +47,7 @@ int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId){
   return desc[fdId].numVersion;
 }
 
-void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version){
+void setNumVersionFileDescriptor(index_fs_t fs, index_descriptor_t fdId, int version){
   assert(pFsList);
   fs -=1;
   fdId -=1;
@@ -204,11 +204,11 @@ void openFileSystemOnLSF(index_fs_t index){
 }
 
 void syncToDisk(index_fs_t index){
+  index -= 1;
   checkIndexForFS(index);
   if((pFsList == NULL) || (pFsList->list[index].blockList == NULL)) return;
 
   size_t result = fwrite(pFsList->list[index].blockList, BLOCK_SIZE, pFsList->list[index].numBlock, pFsList->list[index].disk);
-  // printf("DEBUG: Writing to %s\n",pFsList->list[index].name); BUG: Aparentemente todos os fclosevs estão escrevendo no mesmo arquivo TODO: Bretana, arruma isso.
   if(result != (unsigned)pFsList->list[index].numBlock){
     fprintf(stderr, "\nThere was some problem writen on the file Expected write %lu, but wrote %lu.\n", result, (size_t)pFsList->list[index].numBlock);
     assert(0);

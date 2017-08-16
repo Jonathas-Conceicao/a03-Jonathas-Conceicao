@@ -49,16 +49,20 @@ indice_arquivo_t vopen(indice_fs_t fs, char * nome,  int acesso, int version) {
   if (isOnTAA == 1) return FAIL; // FAIL is file is already open.
   int id = getFileDescriptorIndexFS(fs, name);
   if (id == FALHA) { // If failed to get file descriptor then file doesn't exists yet.
+    if (version != 0) return FAIL; // Can't open another version but 0 if file doesn't even exists.
     if (acesso != LEITURA) { // If access is WRITE or WRITE_AND_READ we can create the file.
       if (createFileDescriptorFS(fs, name) == FAIL) return FAIL; // Create a file descriptor.
       id = getFileDescriptorIndexFS(fs, name);
     } else { // If file READ only.
       return FAIL; // FAIL because file still doesn't exists.
     }
+  } else if (version > getNumVersionFileDescriptor(fs, id)) {
+    if (version - 1 == getNumVersionFileDescriptor(fs, id) && version < MAXVERSIONS && acesso != LEITURA) {
+      setNumVersionFileDescriptor(fs, id, version); // Set the new number of versions.
+    }
   }
 
-  setNumVersionFile(fs, id, version); // Set the opened version.
-  index_file_t pos =  openFileTAA(name, fs, acesso, id);
+  index_file_t pos =  openFileTAA(name, fs, acesso, version, id);
   if(isOnTAA == 0){ // file did not exist
     touchCreation(fs -1, pos -1);
   }else{ //file did exist
@@ -82,7 +86,7 @@ uint32_t vread(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer){
   if (getFileMode(arquivo) == WRITE) return FAIL; // Can't read if it's write only.
   index_fs_t fs = getFileFSTAA(arquivo);
   index_descriptor_t fdId = getFileDescriptorIndexTAA(arquivo);
-  return readFileContent(fs, fdId, tamanho, buffer);
+  return readFileContent(fs, fdId, tamanho, buffer, getNumVersionFile(arquivo));
 }
 
 int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer) {
@@ -91,7 +95,7 @@ int vwrite(indice_arquivo_t arquivo, uint32_t tamanho, char *buffer) {
   if (getFileMode(arquivo) == READ) return FAIL; // Can't write if it's read only.
   index_fs_t fs = getFileFSTAA(arquivo);
   index_descriptor_t fdId = getFileDescriptorIndexTAA(arquivo);
-  uint32_t newSize = writeFileContent(fs, fdId, tamanho, buffer);
+  uint32_t newSize = writeFileContent(fs, fdId, tamanho, buffer, getNumVersionFile(arquivo));
   return setSizeFile(fs, fdId, newSize);
 }
 
