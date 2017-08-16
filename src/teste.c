@@ -222,18 +222,20 @@ void test_date(){
 
 void test_1(){
   remove("test.bin"); // just to be sure
-  int handTest = initfs("test.bin", 666);
+  int handTest1 = initfs("test.bin", 666);
   indice_fs_t ind = vopenfs("test.bin");
 
   WHEN("Tento abrir um arquivo pela primeira vez como leitura");
   THEN("Espero falha");
-  indice_arquivo_t zeroFile = vopen(handTest, "firstFile", LEITURA, 1);
+  indice_arquivo_t zeroFile = vopen(handTest1, "firstFile", LEITURA, 0);
   isEqual(zeroFile, FALHA, 1);
 
-  indice_arquivo_t firstFile = vopen(handTest, "firstFile", ESCRITA, 1);
-  indice_arquivo_t firstFileError = vopen(handTest, "firstFile", LEITURA, 1);
+  indice_arquivo_t firstFile = vopen(handTest1, "firstFile", ESCRITA, 0);
+  indice_arquivo_t firstFileError = vopen(handTest1, "firstFile", LEITURA, 0);
   WHEN("Tento abrir o mesmo arquivo duas vezes: 1 como escrita, 2 como leitura");
-  THEN("Espero falha");
+  THEN("Espero que não de falaha para o primeiro");
+  isNotEqual(firstFile, FALHA, 1);
+  THEN("Espero falha pro segundo");
   isEqual(firstFileError, FALHA, 1);
   
   char *name = calloc(7, sizeof(char));
@@ -242,23 +244,90 @@ void test_1(){
   WHEN("Uso o meu arquivo aberto para escrever uma mensagem e depois fecho-o");
   THEN("Dois sucessos");
   int right = 0;
-  right += vwrite(firstFile, 6, name);
+  right += vwrite(firstFile, 7, name);
   right += vclose(firstFile);
-  isEqual(right, 2, 1); 
+  isEqual(right, 2, 2); 
 
   WHEN("Reabro o arquivo para leitura e leio o mesmo numero de bytes");
-  THEN("Espero ler o mesmo conteudo escrito");
+  THEN("Espero que não falhe ao abrir");
+  indice_arquivo_t firstFileRead = vopen(handTest1, "firstFile", LEITURA, 0);
+  isNotEqual(firstFileRead, FALHA, 1);
+  THEN("E espero ler o mesmo conteudo escrito");
   char *nameRead = calloc(7, sizeof(char));
-  indice_arquivo_t firstFileRead = vopen(handTest, "firstFile", LEITURA, 1);
   vread(firstFileRead, 7, nameRead);
   isEqual(strcmp(name, nameRead), 0, 1);
 
   free(name);
   free(nameRead);
   vclosefs(ind);
+  remove("test.bin"); // just to be sure
 }
 void test_2(){
+  remove("test2.bin");
+  WHEN("Abro um novo file system sem fazer initfs");
+  THEN("Espero ter falha");
+  indice_fs_t ind = vopenfs("test2.bin");
+  isEqual(ind, FALHA, 1);
+
+  WHEN("Feito o initfs");
+  THEN("Espero não ter falha");
+  int handTest2 = initfs("test2.bin", 777);
+  ind = vopenfs("test2.bin");
+  isNotEqual(ind, FALHA, 1);
+
+  WHEN("Abro um arquivo para escrita");
+  THEN("Espero que não falhe");
+  indice_arquivo_t hand = vopen(handTest2, "バットマン", ESCRITA, 0); // translate that
+  isNotEqual(hand, FALHA, 1);
+
+  WHEN("Escrevo um arquivo");
+  THEN("Espero conseguir");
+  char *nananana = calloc(2 * 4 + 1, sizeof(char));
+  strcpy(nananana, "NaNaNaNa");
+  isEqual(vwrite(hand, 2*4+1, nananana), 1, 1);;
+ 
+  WHEN("Fecho arquivo");
+  THEN("Espero ter sucesso");
+  isEqual(vclose(hand), SUCESSO, 1);;
+
+  WHEN("Abro o arquivo pra leitura");
+  THEN("Espero não falhar");
+  hand = vopen(handTest2, "バットマン", LEITURA, 0);
+  isNotEqual(hand, FALHA, 1);
+
+  WHEN("Faço um seek");
+  THEN("Espero sucesso");
+  isEqual(vseek(hand, 2), SUCESSO, 1);
+
+  WHEN("Leio o restante do arquivo");
+  THEN("Espero parte da string escrita");
+  char *nana = calloc(2 * 2 + 1, sizeof(char));
+  vread(hand, 4, nana); 
+  isEqual(strcmp("NaNa", nana), 0, 1);
+
+  WHEN("Deleto um arquivo existente");
+  THEN("Espero sucesso");
+  isEqual(vdelete(hand), SUCESSO, 1);
+
+  WHEN("Tento abrir um arquivo recem apagado");
+  IF("For para leitura");
+  THEN("Falha");
+  isEqual(vopen(handTest2, "バットマン", LEITURA, 0), FALHA, 1);;
+  IF("For para escrita");
+  THEN("Espero não falhar");
+  hand = vopen(handTest2, "バットマン", ESCRITA, 0);
+  isNotEqual(hand, FALHA, 1);
+
+  WHEN("Se tento ler desse arquivo");
+  THEN("Não devo ler nada, pois ele foi apagado e este é um arquivo novo");
+  isEqual(vread(hand, 4, nana), 0, 1);
+
+  free(nananana);
+  free(nana);
+  vclosefs(ind);
+  remove("test2.bin");
 }
+
 void test_3(){
 }
 

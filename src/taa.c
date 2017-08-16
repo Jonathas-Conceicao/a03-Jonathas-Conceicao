@@ -96,6 +96,7 @@ int getFileMode(index_file_t id) {
 }
 
 int getFileDescriptorIndexTAA(index_file_t id) {
+  if(pTable == NULL) return -1;
   taa_t table = *pTable;
   id -= 1;
   if(!idIsValid(id)) return -1;
