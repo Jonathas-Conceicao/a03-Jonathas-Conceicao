@@ -62,7 +62,7 @@ int getNumBlocksMetaData();
  */
 int createFileDescriptorFS(index_fs_t fs, charzao_t *name);
 
-/** TODO {DONE}: Bretana implenta isso aqui. Tahnks.
+/**
  * Deletes a file descriptor from the FS.
  * @param  fs   File's File System.
  * @param  fdId File's file descriptor ID.
@@ -88,7 +88,7 @@ int getFileDescriptorIndexFS(index_fs_t fs, charzao_t *name);
  */
 index_block_t *getFirstBlockList(index_fs_t fs, index_descriptor_t fdId);
 
-/** TODO {DONE}: Bretana implementa isso aqui também. Thanks.
+/**
  * Returns the referece for the block list (AFTER the directories) of the File System.
  *
  * @param  fs             Index of the FS.
@@ -115,16 +115,16 @@ int getSeekByteFile(index_fs_t fs, index_descriptor_t fdId);
  */
 int setSeekByteFile(index_fs_t fs, index_descriptor_t fdId, uint32_t val);
 
-/** TODO {DONE}: Bretana Implemente essas funções para lidar com a versão do arquivo.
+/**
  * Returns the current number of versions that the file has.
  *
  * @param  fs                Index of file's FS.
  * @param  fdId              Index of file's File Descriptor.
  * @return                   Number of versions.
  */
-int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId);
+int getNumVersionFileDescriptor(index_fs_t fs, index_descriptor_t fdId);
 
-/** TODO {DONE}: Bretana Implemente essas funções para lidar com a versão do arquivo.
+/**
  * Sets file's version.
  *
  * @param  fs                Index of file's FS.
@@ -132,7 +132,7 @@ int getNumVersionFile(index_fs_t fs, index_descriptor_t fdId);
  * @param  version           Version to be set.
  * @return                   SUCCESS or FAIL.
  */
-void setNumVersionFile(index_fs_t fs, index_descriptor_t fdId, int version);
+void setNumVersionFileDescriptor(index_fs_t fs, index_descriptor_t fdId, int version);
 
 /**
  * Get file's size.

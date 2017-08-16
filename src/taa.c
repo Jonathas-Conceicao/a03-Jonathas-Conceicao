@@ -24,14 +24,13 @@ void destryTAA() {
   free(pTable);
 }
 
-index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, int descriptorIndex) {
+index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, int version, index_descriptor_t descriptorIndex) {
   if (pTable == NULL) initTAA(MAX_FILES);
   taa_t table = *pTable;
   for (int i = 0; i < table.size; ++i) {
     if (table.file[i].vBit > 0 && compareCharzao(table.file[i].name, name) == 0) {
-      if (table.file[i].fsIndex == fsIndex) {
-        table.file[i].mode = mode;
-        return (i+1); // First index seams to be 1 by teacher's tests
+      if (table.file[i].fsIndex == fsIndex && table.file[i].version == version) {
+        return FAIL; // Can't open same file in the same version twice.
       }
     }
   }
@@ -42,6 +41,7 @@ index_file_t openFileTAA(charzao_t *name, index_fs_t fsIndex, int mode, int desc
     copyCharzao(table.file[pos].name, name);
     table.file[pos].fsIndex = fsIndex;
     table.file[pos].mode = mode;
+    table.file[pos].version = version;
     table.file[pos].descriptorIndex = descriptorIndex;
     return (pos+1); // First index seams to be 1 by teacher's tests
   }
@@ -100,6 +100,12 @@ int getFileDescriptorIndexTAA(index_file_t id) {
   id -= 1;
   if(!idIsValid(id)) return -1;
   return table.file[id].descriptorIndex;
+}
+
+int getNumVersionFile (index_file_t id) {
+  id -= 1;
+  if (!idIsValid(id)) return -1;
+  return pTable->file[id].version;
 }
 
 index_fs_t getFileFSTAA(index_file_t id) {
